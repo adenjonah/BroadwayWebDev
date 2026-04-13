@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hajis Famous Deli — Morningside Heights, NYC</title>
+<meta name="description" content="Home of the original chopped cheese — invented here and featured in The New York Times. Serving Morningside Heights for 30+ years on Amsterdam Ave near Columbia University." />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --color-primary: #1f7a3a;
+    --color-primary-dark: #155a29;
+    --color-accent: #4caf50;
+    --color-bg: #faf7f0;
+    --color-card: #fffdf7;
+    --color-text: #1a1a1a;
+    --color-muted: #5a5a55;
+    --color-line: #e8e3d4;
+    --font-heading: "Playfair Display", Georgia, serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --max-width: 1100px;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; }
+  .mobile-only { display: none; }
+  @media (max-width: 640px) {
+    .mobile-only { display: block; }
+    .desktop-only { display: none !important; }
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 { font-family: var(--font-heading); font-weight: 700; line-height: 1.15; margin: 0 0 0.5em; }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+  h2 { font-size: clamp(1.6rem, 3.2vw, 2.3rem); }
+  h3 { font-size: 1.2rem; }
+  p { margin: 0 0 1em; }
+  a { color: var(--color-primary-dark); }
+
+  .wrap { max-width: var(--max-width); margin: 0 auto; padding: 0 1.25rem; }
+
+  /* Header */
+  header.site {
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-card);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    gap: 1rem;
+  }
+  .brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--color-text); }
+  .brand img { width: 48px; height: 48px; border-radius: 50%; }
+  .brand-name { font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; }
+  .nav-links { display: none; gap: 1.75rem; }
+  .nav-links a { color: var(--color-text); text-decoration: none; font-size: 0.95rem; }
+  .nav-links a:hover { color: var(--color-primary); }
+  @media (min-width: 720px) { .nav-links { display: flex; } }
+
+  /* Hero */
+  .hero {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(76,175,80,0.12), transparent 55%),
+      linear-gradient(180deg, var(--color-bg) 0%, #f3ede0 100%);
+    padding: 3.5rem 0 4rem;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  @media (min-width: 860px) {
+    .hero-grid { grid-template-columns: 1.25fr 0.9fr; }
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-primary-dark);
+    border: 1px solid var(--color-primary);
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    margin-bottom: 1.2rem;
+  }
+  .hero p.lede {
+    font-size: 1.12rem;
+    color: var(--color-muted);
+    max-width: 38em;
+    margin-bottom: 1.8rem;
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.35rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.98rem;
+    border: 1.5px solid transparent;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary { background: var(--color-primary); color: #fff; }
+  .btn-primary:hover { background: var(--color-primary-dark); transform: translateY(-1px); }
+  .btn-outline { border-color: var(--color-primary); color: var(--color-primary-dark); }
+  .btn-outline:hover { background: var(--color-primary); color: #fff; }
+  .btn svg { width: 18px; height: 18px; }
+
+  .hero-logo {
+    display: flex;
+    justify-content: center;
+  }
+  .hero-logo img {
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: drop-shadow(0 8px 24px rgba(31,122,58,0.18));
+  }
+
+  /* Sections */
+  section { padding: 4rem 0; }
+  section.alt { background: var(--color-card); border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
+  .section-head { max-width: 42em; margin-bottom: 2.5rem; }
+  .section-head .kicker {
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 820px) {
+    .about-grid { grid-template-columns: 1.4fr 1fr; gap: 3rem; }
+  }
+  .facts {
+    background: var(--color-bg);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.75rem;
+  }
+  .facts dl { margin: 0; display: grid; gap: 0.9rem; }
+  .facts dt {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+  .facts dd { margin: 0.2rem 0 0; font-weight: 500; }
+  .facts dd a { color: var(--color-text); text-decoration: none; border-bottom: 1px dotted var(--color-primary); }
+
+  /* Services / Menu */
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 640px) { .cards { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 960px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+  .card {
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    padding: 1.6rem 1.5rem;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .card:hover { border-color: var(--color-primary); transform: translateY(-2px); }
+  .card .icon {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(31,122,58,0.1);
+    color: var(--color-primary-dark);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .card .icon svg { width: 22px; height: 22px; }
+  .card h3 { margin-bottom: 0.35rem; }
+  .card p { font-size: 0.95rem; color: var(--color-muted); margin: 0; }
+
+  /* Testimonials */
+  .quotes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 820px) { .quotes { grid-template-columns: repeat(3, 1fr); } }
+  blockquote {
+    margin: 0;
+    background: var(--color-bg);
+    border-left: 3px solid var(--color-primary);
+    padding: 1.4rem 1.5rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  blockquote p { font-size: 0.98rem; color: var(--color-text); }
+  .stars { display: inline-flex; gap: 2px; color: #e0a82e; margin-bottom: 0.5rem; }
+  .stars svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; }
+  cite { display: block; font-style: normal; font-weight: 600; font-size: 0.9rem; color: var(--color-muted); margin-top: 0.75rem; }
+
+  /* Testimonials carousel (pure CSS, no JS) */
+  .carousel {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    min-height: 280px;
+  }
+  .carousel-track {
+    position: relative;
+    min-height: 260px;
+  }
+  .carousel blockquote {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: carouselFade 54s infinite;
+    background: var(--color-bg);
+    border-left: 3px solid var(--color-primary);
+    padding: 1.8rem 2rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .carousel:hover blockquote { animation-play-state: paused; }
+  .carousel blockquote:nth-child(1) { animation-delay: 0s; }
+  .carousel blockquote:nth-child(2) { animation-delay: -48s; }
+  .carousel blockquote:nth-child(3) { animation-delay: -42s; }
+  .carousel blockquote:nth-child(4) { animation-delay: -36s; }
+  .carousel blockquote:nth-child(5) { animation-delay: -30s; }
+  .carousel blockquote:nth-child(6) { animation-delay: -24s; }
+  .carousel blockquote:nth-child(7) { animation-delay: -18s; }
+  .carousel blockquote:nth-child(8) { animation-delay: -12s; }
+  .carousel blockquote:nth-child(9) { animation-delay: -6s; }
+  @keyframes carouselFade {
+    0%       { opacity: 0; transform: translateY(8px); }
+    2%       { opacity: 1; transform: translateY(0); }
+    11.11%   { opacity: 1; transform: translateY(0); }
+    13.11%   { opacity: 0; transform: translateY(-8px); }
+    100%     { opacity: 0; transform: translateY(-8px); }
+  }
+  .carousel cite { margin-top: 1rem; }
+  .carousel cite .reviewer-name { display: block; color: var(--color-text); font-size: 0.98rem; }
+  .carousel cite .reviewer-meta { display: block; font-weight: 400; font-size: 0.8rem; opacity: 0.75; margin-top: 2px; }
+  .carousel cite .google-label {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1.5rem;
+  }
+  .carousel-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    opacity: 0.3;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .carousel { max-width: none; min-height: 0; }
+    .carousel-track {
+      position: static;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      min-height: 0;
+    }
+    @media (min-width: 820px) {
+      .carousel-track { grid-template-columns: repeat(2, 1fr); }
+    }
+    .carousel blockquote {
+      position: static;
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+    .carousel-dots { display: none; }
+  }
+
+  /* Contact */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 820px) { .contact-grid { grid-template-columns: 1fr 1.2fr; gap: 3rem; } }
+  .info-block { margin-bottom: 1.8rem; }
+  .info-block h3 {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: 0.45rem;
+  }
+  .info-block p, .info-block a { margin: 0; color: var(--color-text); text-decoration: none; font-size: 1.05rem; }
+  .info-block a:hover { color: var(--color-primary); }
+
+  table.hours { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.hours td { padding: 0.5rem 0; border-bottom: 1px dashed var(--color-line); }
+  table.hours td:last-child { text-align: right; color: var(--color-muted); }
+  table.hours tr:last-child td { border-bottom: none; }
+
+  .map {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .map iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+  /* Footer */
+  footer.site {
+    background: var(--color-primary-dark);
+    color: #e8f2ea;
+    padding: 2.5rem 0 1.8rem;
+    margin-top: 2rem;
+  }
+  footer.site a { color: #fff; }
+  .footer-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  .socials { display: flex; gap: 0.8rem; }
+  .socials a {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    transition: background 0.15s ease;
+  }
+  .socials a:hover { background: rgba(255,255,255,0.22); }
+  .socials svg { width: 18px; height: 18px; }
+  /* Press strip */
+  .press {
+    background: var(--color-card);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    padding: 2rem 0;
+  }
+  .press-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem 2rem;
+    text-align: center;
+  }
+  .press-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.4rem;
+  }
+  .press a {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 2px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .press a:hover { color: var(--color-primary); border-color: var(--color-primary); }
+
+  /* Menu editorial layout */
+  .menu-cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  @media (min-width: 820px) { .menu-cols { grid-template-columns: 1fr 1fr; gap: 3rem; } }
+  .menu-block h3 {
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    font-family: var(--font-body);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .menu-block ul { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+  .menu-block li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px dotted var(--color-line);
+    font-size: 0.96rem;
+  }
+  .menu-block li span:first-child { color: var(--color-text); }
+  .menu-block li span:last-child { color: var(--color-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .menu-note { font-size: 0.88rem; color: var(--color-muted); font-style: italic; margin-bottom: 1rem; }
+  .menu-foot {
+    margin-top: 2.5rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .build-your-own {
+    background: var(--color-bg);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.75rem;
+    margin-top: 1rem;
+  }
+  .build-your-own h4 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    margin: 0 0 0.6rem;
+  }
+  .build-your-own p { font-size: 0.92rem; color: var(--color-muted); margin: 0 0 0.6rem; }
+  .build-your-own strong { color: var(--color-text); font-weight: 600; }
+
+  /* Specialty callout */
+  .specialty-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 640px) { .specialty-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 960px) { .specialty-grid { grid-template-columns: repeat(4, 1fr); } }
+  .specialty {
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.3rem;
+  }
+  .specialty .tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .specialty h3 { font-size: 1.08rem; margin-bottom: 0.35rem; }
+  .specialty p { font-size: 0.9rem; color: var(--color-muted); margin: 0; }
+  .promo-price {
+    margin-top: 0.6rem;
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    color: var(--color-primary-dark);
+  }
+
+  /* Catering + delivery banner */
+  .banner {
+    background: var(--color-primary-dark);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 2rem 2rem;
+    display: grid;
+    gap: 1.2rem;
+    align-items: center;
+  }
+  @media (min-width: 760px) { .banner { grid-template-columns: 1.4fr auto; } }
+  .banner h3 { color: #fff; font-size: 1.5rem; margin-bottom: 0.3rem; }
+  .banner p { color: rgba(255,255,255,0.85); margin: 0; }
+  .banner .btn-primary { background: #fff; color: var(--color-primary-dark); }
+  .banner .btn-primary:hover { background: #f3ede0; }
+
+  /* Delivery row */
+  .delivery-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .delivery-row a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.15rem;
+    border: 1.5px solid var(--color-line);
+    border-radius: var(--radius);
+    background: var(--color-card);
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .delivery-row a:hover { border-color: var(--color-primary); color: var(--color-primary); }
+  .delivery-row svg { width: 16px; height: 16px; }
+
+  .payment-line {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+
+  .footer-bottom {
+    margin-top: 2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* ---------- Mobile responsiveness overrides ---------- */
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { font-size: 16px; }
+  img, iframe { max-width: 100%; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 1rem; }
+    h1 { font-size: clamp(1.9rem, 8vw, 2.4rem); }
+    h2 { font-size: clamp(1.45rem, 5.5vw, 1.8rem); }
+
+    /* Header */
+    .nav { padding: 0.8rem 1rem; gap: 0.6rem; }
+    .brand { gap: 0.55rem; min-width: 0; }
+    .brand img { width: 40px; height: 40px; flex-shrink: 0; }
+    .brand-name { font-size: 1rem; line-height: 1.2; }
+
+    /* Hero */
+    .hero { padding: 2.25rem 0 2.5rem; }
+    .hero-grid { gap: 1.75rem; }
+    .hero p.lede { font-size: 1rem; margin-bottom: 1.4rem; }
+    .hero-logo img { max-width: 240px; }
+
+    /* CTAs - full width, tappable, primary dominates */
+    .cta-row { flex-direction: column; align-items: stretch; gap: 0.65rem; margin-top: 0.5rem; }
+    .cta-row .btn { width: 100%; justify-content: center; min-height: 56px; padding: 1rem 1.1rem; font-size: 1.1rem; border-radius: 10px; }
+    .cta-row .btn-primary { font-size: 1.2rem; font-weight: 700; box-shadow: 0 10px 24px rgba(31,122,58,0.28); letter-spacing: 0.01em; }
+    .cta-row .btn-primary svg { width: 22px; height: 22px; }
+    .cta-row .btn-outline { font-size: 0.95rem; min-height: 48px; background: transparent; }
+
+    /* Sections */
+    section { padding: 2.75rem 0; }
+    .section-head { margin-bottom: 1.75rem; }
+
+    /* Menu */
+    .menu-block li {
+      font-size: 0.92rem;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+    }
+    .menu-block li span:first-child { flex: 1 1 auto; min-width: 0; }
+    .menu-foot { flex-direction: column; align-items: stretch; }
+    .menu-foot .btn { width: 100%; justify-content: center; min-height: 48px; }
+    .build-your-own { padding: 1.25rem 1.25rem; }
+
+    /* Specialty */
+    .specialty { padding: 1.2rem 1.15rem; }
+
+    /* Carousel - give room for longer quotes at narrow widths */
+    .carousel { min-height: 400px; }
+    .carousel-track { min-height: 380px; }
+    .carousel blockquote { padding: 1.4rem 1.25rem; font-size: 0.95rem; }
+    .carousel blockquote p { font-size: 0.95rem; }
+
+    /* Banner */
+    .banner { padding: 1.5rem 1.35rem; }
+    .banner h3 { font-size: 1.25rem; }
+    .banner .btn { width: 100%; justify-content: center; min-height: 48px; }
+
+    /* Delivery row - 2 per row on mobile */
+    .delivery-row a {
+      flex: 1 1 calc(50% - 0.5rem);
+      justify-content: center;
+      min-height: 44px;
+      padding: 0.7rem 0.6rem;
+      font-size: 0.88rem;
+    }
+
+    /* Contact */
+    table.hours { font-size: 0.9rem; }
+    table.hours td { padding: 0.45rem 0; }
+
+    /* Press */
+    .press-inner { gap: 0.75rem 1.5rem; }
+    .press a { font-size: 0.98rem; }
+
+    /* Footer */
+    .footer-grid { flex-direction: column; align-items: center; text-align: center; }
+    .socials { justify-content: center; }
+    .footer-bottom { flex-direction: column; align-items: center; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 0 0.9rem; }
+    h1 { font-size: clamp(1.75rem, 8vw, 2.1rem); }
+
+    .nav { padding: 0.7rem 0.9rem; }
+    .brand img { width: 36px; height: 36px; }
+    .brand-name { font-size: 0.95rem; }
+
+    .hero { padding: 1.75rem 0 2rem; }
+    .hero-logo img { max-width: 200px; }
+
+    /* Menu - stack item name/price vertically if needed */
+    .menu-block li { flex-wrap: wrap; }
+    .menu-block li span:last-child { margin-left: auto; }
+
+    /* Carousel extra headroom at 320-480 */
+    .carousel { min-height: 460px; }
+    .carousel-track { min-height: 440px; }
+
+    /* Delivery row single column at very small widths */
+    .delivery-row a { flex: 1 1 100%; }
+
+    .banner { padding: 1.3rem 1.1rem; }
+    .build-your-own { padding: 1.1rem 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- EDIT: header / navigation -->
+<header class="site">
+  <div class="nav">
+    <a class="brand" href="#top">
+      <img src="logo.png" alt="Hajis Famous Deli logo" />
+      <span class="brand-name">Hajis Famous Deli</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#menu">Menu</a>
+      <a href="#specialty">What's new</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#visit">Visit</a>
+    </nav>
+  </div>
+</header>
+
+<!-- EDIT: hero section -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Amsterdam Ave · Since the 1990s</span>
+      <h1>Hajis Famous Deli</h1>
+      <p class="lede desktop-only">For more than thirty years, Hajis Famous Deli has been a fixture of Morningside Heights — the kind of place where Columbia undergrads, night-shift workers, and neighborhood regulars all wind up at the same counter. The chopped cheese wasn’t just perfected here; it was invented here. The New York Times came uptown to write about it in 2016, and the food shows have been finding their way to our door ever since.</p>
+      <p class="lede mobile-only">The chopped cheese was invented here — featured in The New York Times. Three decades on Amsterdam Ave, still open late.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="tel:+16466843003">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call to Order
+        </a>
+        <a class="btn btn-outline" href="https://www.google.com/maps/dir/?api=1&destination=1129+Amsterdam+Ave+New+York+NY+10025" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Get Directions
+        </a>
+      </div>
+    </div>
+    <div class="hero-logo">
+      <img src="logo.png" alt="Hajis Famous Deli — 1129 Amsterdam Avenue, New York, NY 10025" />
+    </div>
+  </div>
+</section>
+
+<!-- EDIT: about section -->
+<section id="about" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Our story</div>
+      <h2>Three decades on Amsterdam Avenue.</h2>
+    </div>
+    <div class="about-grid">
+      <div>
+        <div class="desktop-only">
+          <p>For more than thirty years, Hajis Famous Deli has been a fixture of Morningside Heights — the kind of place where Columbia undergrads, night-shift workers, and neighborhood regulars all wind up at the same counter. The chopped cheese wasn’t just perfected here; it was invented here. The New York Times came uptown to write about it in 2016, and the food shows have been finding their way to our door ever since.</p>
+<p>Alongside the original chopped cheese you’ll find signature heroes built on a griddle we’ve been running for decades, breakfast sandwiches from six in the morning, hand-rolled omelettes, fresh-pressed juices, and a build-your-own sandwich board that can put almost anything on a roll. We also cater — fresh juices, sandwich platters, and fruit trays for offices, classrooms, and events around the neighborhood.</p>
+<p>Lately the counter has grown to include Dubai-style desserts, house protein bars, yogurt-and-oat breakfast bowls, and fresh ginger shots. We stay open late because the neighborhood asks us to — whether you’re coming off a shift, grinding through finals week, or just hungry at an hour when most kitchens have closed.</p>
+        </div>
+        <p class="mobile-only">The chopped cheese was <strong>invented</strong> here — featured in The New York Times. Three decades on Amsterdam Ave, still open late.</p>
+      </div>
+      <aside class="facts">
+        <dl>
+          <div><dt>Location</dt><dd><a href="https://www.google.com/maps?q=1129+Amsterdam+Ave+New+York+NY+10025" target="_blank" rel="noopener">1129 Amsterdam Ave</a></dd></div>
+<div><dt>Neighborhood</dt><dd>Morningside Heights</dd></div>
+<div><dt>Specialty</dt><dd>Original chopped cheese, signature heroes, juice bar</dd></div>
+<div><dt>Serving since</dt><dd>Over 30 years</dd></div>
+<div><dt>Rating</dt><dd>4.7 on Google (52 reviews)</dd></div>
+<div><dt>Press</dt><dd>The New York Times, 2016</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- EDIT: press strip — "as seen in" links -->
+<div class="press">
+  <div class="wrap press-inner">
+    <div class="press-label">As featured in</div>
+    <a href="https://www.nytimes.com/2016/11/08/nyregion/chopped-cheese-sandwich-harlem.html" target="_blank" rel="noopener">The New York Times</a>
+<a href="https://hungrytravelers.com/going-to-see-the-inventor-of-chopped-cheese/" target="_blank" rel="noopener">Hungry Travelers</a>
+<a href="https://www.youtube.com/watch?v=9gu0v2ITeYU" target="_blank" rel="noopener">YouTube Feature</a>
+  </div>
+</div>
+
+<!-- EDIT: menu — items and prices -->
+<section id="menu">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">What we serve</div>
+      <h2>A deli counter, a grill, and a juice bar.</h2>
+    </div>
+    <div class="section-head" style="margin-bottom: 1.5rem;">
+      <p style="color: var(--color-muted); max-width: 40em; margin: 0;">A selection from the counter. Roll (R) and Hero (H) pricing where listed. Prices subject to change.</p>
+    </div>
+
+    <div class="menu-cols">
+      <div>
+  <div class="menu-block">
+    <h3>Breakfast</h3>
+    <p class="menu-note">R = Roll · H = Hero</p>
+    <ul>
+      <li><span>BLT</span><span>$6 / $7</span></li>
+      <li><span>Egg & Cheese</span><span>$4 / $5</span></li>
+      <li><span>Beef Sausage, Egg & Cheese</span><span>$7 / $8</span></li>
+      <li><span>Turkey Bacon, Egg & Cheese</span><span>$7 / $8</span></li>
+      <li><span>Any Cold Cut, Egg & Cheese</span><span>$8 / $9</span></li>
+      <li><span>Egg Salad</span><span>$7 / $8</span></li>
+      <li><span>Tuna Salad</span><span>$7 / $8</span></li>
+      <li><span>Bagel with Butter</span><span>$2</span></li>
+      <li><span>Bagel with Cream Cheese</span><span>$3.50</span></li>
+      <li><span>Bagel with Cream Cheese & Jelly</span><span>$4.50</span></li>
+      <li><span>Bagel with Cream Cheese & Bacon</span><span>$6</span></li>
+      <li><span>Toast with Peanut Butter</span><span>$3</span></li>
+      <li><span>Grilled Cheese</span><span>$4</span></li>
+      <li><span>Egg & Cheese on Croissant</span><span>$5.50</span></li>
+      <li><span>Bacon, Egg & Cheese on Croissant</span><span>$7.50</span></li>
+    </ul>
+  </div>
+  <div class="menu-block">
+    <h3>Omelettes</h3>
+    <ul>
+      <li><span>American — cheese, turkey ham, turkey bacon, mushrooms, onions, peppers, toast</span><span>$12</span></li>
+      <li><span>Classic — onions, tomatoes, toast</span><span>$8</span></li>
+      <li><span>Egg White — spinach, tomatoes, mushrooms, onions, peppers, toast</span><span>$10</span></li>
+    </ul>
+  </div>
+</div>
+<div>
+  <div class="menu-block">
+    <h3>Signature Sandwiches</h3>
+    <p class="menu-note">Roll / Toast from $9 · Hero / Wrap from $10.50</p>
+    <ul>
+      <li><span>Hajis Steak — mayo, onion, American cheese</span><span>$9 / $11</span></li>
+      <li><span>Hajis Chopped Cheese — mayo, ketchup, onions, lettuce, tomato</span><span>$9 / $10</span></li>
+      <li><span>Hajis Club — turkey, spinach, mustard, mozzarella</span><span>$9 / $10</span></li>
+      <li><span>Hajis Steak Burger Club — fried egg, mayo, spinach, onions, pepper jack</span><span>$8</span></li>
+      <li><span>Hajis Crunch Hero — turkey, pepper jack, mustard</span><span>$9</span></li>
+    </ul>
+  </div>
+  <div class="menu-block">
+    <h3>Sides</h3>
+    <ul>
+      <li><span>6 pc Falafel</span><span>$7</span></li>
+      <li><span>4 pc Chicken Tenders with Fries</span><span>$10</span></li>
+      <li><span>6 pc Hot Wings</span><span>$8</span></li>
+      <li><span>5 pc Mozzarella Sticks</span><span>$6</span></li>
+      <li><span>French Fries</span><span>$5</span></li>
+      <li><span>Curly Fries</span><span>$5</span></li>
+      <li><span>Onion Rings</span><span>$5</span></li>
+    </ul>
+  </div>
+</div>
+    </div>
+
+    <div class="build-your-own">
+      <h4>Build Your Own</h4>
+<p><strong>Proteins:</strong> chopped cheese, steak, pastrami, roast beef, oven gold turkey, turkey ham, beef salami, buffalo chicken, salsalito turkey, chicken breast, honey maple turkey, grilled chicken, chicken cutlet</p>
+<p><strong>Toppings (up to 3, extras $0.75):</strong> lettuce, tomato, onion, spinach, sweet peppers, jalapeños, mushroom, banana peppers, avocado</p>
+<p><strong>Sauces:</strong> mayo, ketchup, mustard, spicy mustard, BBQ, hot sauce, chipotle mayo</p>
+    </div>
+
+    <div class="menu-foot">
+      <p style="margin: 0; color: var(--color-muted); font-size: 0.92rem;">This is a selection — the full counter menu has more.</p>
+      <a class="btn btn-outline" href="menu.jpeg" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        View Full Menu
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- EDIT: specialty / new items -->
+<section id="specialty" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">New at the counter</div>
+      <h2>Beyond the deli.</h2>
+      <p style="color: var(--color-muted); max-width: 40em;">A growing lineup of desserts, house-made protein bars, breakfast bowls, and cold-pressed shots.</p>
+    </div>
+    <div class="specialty-grid">
+      <div class="specialty">
+  <span class="tag">Dessert</span>
+  <h3>Dubai Pudding</h3>
+  <p>Rich, creamy, and finished the way it's served in Dubai. A quiet favorite with the after-dinner crowd.</p>
+</div>
+<div class="specialty">
+  <span class="tag">Dessert</span>
+  <h3>Strawberry Dubai Chocolate</h3>
+  <p>The viral Dubai chocolate bar, layered with fresh strawberry. New to the case.</p>
+</div>
+<div class="specialty">
+  <span class="tag">Grab & go</span>
+  <h3>Protein Bars</h3>
+  <p>Fudge Brownie, Peanut Butter, Raspberry Yogurt, Coconut, Cookies & Cream, Mocha, Orange, Blueberry.</p>
+</div>
+<div class="specialty">
+  <span class="tag">Breakfast</span>
+  <h3>Yogurt Bowls</h3>
+  <p>Yogurt, oats, and nuts — built for a quick breakfast on the way to class or work.</p>
+</div>
+<div class="specialty">
+  <span class="tag">Cold-pressed</span>
+  <h3>Fresh Ginger Shots</h3>
+  <p>Pressed to order. Sharp, warming, and the one regulars grab on the way out.</p>
+  <div class="promo-price">$4 each · 3 for $9</div>
+</div>
+<div class="specialty">
+  <span class="tag">Juice bar</span>
+  <h3>Fresh-Pressed Juices</h3>
+  <p>Cold-pressed to order — citrus, greens, and the citrus-avocado regulars keep asking for.</p>
+</div>
+<div class="specialty">
+  <span class="tag">Halal</span>
+  <h3>Chicken Over Rice</h3>
+  <p>Halal-style chicken over yellow rice with salad and white sauce. A counter staple.</p>
+</div>
+<div class="specialty">
+  <span class="tag">Late night</span>
+  <h3>Open Until 11:40 PM</h3>
+  <p>The grill runs late because the neighborhood asks it to. Tenders, wings, and heroes past closing time elsewhere.</p>
+</div>
+    </div>
+
+    <!-- EDIT: catering banner -->
+    <div class="banner" style="margin-top: 3rem;">
+  <div>
+    <h3>Catering for every occasion</h3>
+    <p>Full catering service — fresh juices, sandwich platters, fruit trays, and more. Classroom meetings, office lunches, dorm events. Call to plan a spread.</p>
+  </div>
+  <div>
+    <a class="btn btn-primary" href="tel:+16466843003">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Call (646) 684-3003
+    </a>
+  </div>
+</div>
+  </div>
+</section>
+
+<!-- EDIT: testimonials -->
+<section id="reviews" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">From the neighborhood</div>
+      <h2>Straight from Google reviews.</h2>
+    </div>
+    <div class="carousel" aria-label="Customer reviews carousel">
+      <div class="carousel-track">
+        <blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>Great philly cheese sandwiches here with a unique recipe for the sauce. I'd highly recommend. Very convenient for students to swoop in and grab something. Great selection of unique sandwiches and burgers.</p>
+  <cite>
+    <span class="reviewer-name">— John Schlaerth</span>
+    <span class="reviewer-meta">Local Guide · 36 reviews</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+<blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>I like their steak sandwich, and also the peter luger burger. They make good milkshakes too.</p>
+  <cite>
+    <span class="reviewer-name">— Crypto Hustler</span>
+    <span class="reviewer-meta">1 review</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+<blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>Delicious - classic NYC chopped cheese. Haji's doesn't miss.</p>
+  <cite>
+    <span class="reviewer-name">— Malcolm Thaxton</span>
+    <span class="reviewer-meta">Local Guide · 36 reviews · 166 photos</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+<blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>Absolutely fantastic deli, big improvement since it's been under new management. Ask the deli guy to toast your muffin with butter, way better than a regular muffin!</p>
+  <cite>
+    <span class="reviewer-name">— Omar Asous</span>
+    <span class="reviewer-meta">10 reviews</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+<blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>First time delivery. Superior chopped cheese, as expected. Signature sandwich. Nicely executed chicken over rice. Good place.</p>
+  <cite>
+    <span class="reviewer-name">— William Reiland</span>
+    <span class="reviewer-meta">Local Guide · 84 reviews · 109 photos</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+<blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>Best staff everyone is always so nice. And the chopped cheese is so fire! They also have a cool variety of international snacks.</p>
+  <cite>
+    <span class="reviewer-name">— william pyle</span>
+    <span class="reviewer-meta">4 reviews</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+<blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>Amazing store if you looking for the famous NYC chopped cheese. Good atmosphere and friendly staff. Highly recommended.</p>
+  <cite>
+    <span class="reviewer-name">— Aitch N</span>
+    <span class="reviewer-meta">1 review</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+<blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>The best deli in town. If you're looking for a nice clean deli, this is the place. Five stars. Keep up the great work</p>
+  <cite>
+    <span class="reviewer-name">— Join</span>
+    <span class="reviewer-meta">7 reviews</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+<blockquote>
+  <div class="stars" aria-label="5 out of 5 stars">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+  </div>
+  <p>I really like this place, they have a pretty good variety. Great prices for students too.</p>
+  <cite>
+    <span class="reviewer-name">— Noelle Smith</span>
+    <span class="reviewer-meta">2 reviews · 1 photo</span>
+    <span class="google-label">Google review</span>
+  </cite>
+</blockquote>
+      </div>
+      <div class="carousel-dots" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDIT: contact info -->
+<section id="visit">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Find us</div>
+      <h2>Stop by the counter.</h2>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <div class="info-block">
+          <h3>Address</h3>
+          <p><a href="https://www.google.com/maps?q=1129+Amsterdam+Ave+New+York+NY+10025" target="_blank" rel="noopener">1129 Amsterdam Avenue<br />New York, NY 10025</a></p>
+        </div>
+        <div class="info-block">
+          <h3>Phone</h3>
+          <p><a href="tel:+16466843003">(646) 684-3003</a></p>
+        </div>
+        <!-- EDIT: order online / delivery platforms -->
+        <div class="info-block">
+          <h3>Order online</h3>
+          <div class="delivery-row">
+            <a href="https://www.doordash.com/store/hajis-famous-deli-new-york-31903795/92558747/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> DoorDash</a>
+<a href="https://www.ubereats.com/store/hajis-famous-deli/eWm8Yzr3UduvliJ502y-jA" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Uber Eats</a>
+<a href="https://www.grubhub.com/restaurant/haji-famous-deli-1129-amsterdam-ave-new-york/9203208" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Grubhub</a>
+          </div>
+        </div>
+        <div class="info-block">
+          <h3>Hours</h3>
+          <table class="hours">
+            <tr><td>Monday</td><td>6:00 AM – 11:40 PM</td></tr>
+<tr><td>Tuesday</td><td>6:00 AM – 11:40 PM</td></tr>
+<tr><td>Wednesday</td><td>6:00 AM – 11:40 PM</td></tr>
+<tr><td>Thursday</td><td>6:00 AM – 11:40 PM</td></tr>
+<tr><td>Friday</td><td>6:00 AM – 11:40 PM</td></tr>
+<tr><td>Saturday</td><td>8:00 AM – 11:40 PM</td></tr>
+<tr><td>Sunday</td><td>8:00 AM – 10:00 PM</td></tr>
+          </table>
+        </div>
+        <p class="payment-line">Accepts Visa, MasterCard, Discover, American Express, EBT, and all major credit cards.</p>
+      </div>
+      <div class="map">
+        <iframe
+          title="Map to Hajis Famous Deli"
+          src="https://www.google.com/maps?q=1129+Amsterdam+Ave+New+York+NY+10025&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDIT: footer -->
+<footer class="site">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 0.3rem;">Hajis Famous Deli</div>
+        <div style="opacity: 0.8; font-size: 0.9rem;">1129 Amsterdam Avenue · New York, NY 10025</div>
+      </div>
+      <div class="socials">
+        <a href="https://www.instagram.com/hajisfamousdeli/" target="_blank" rel="noopener" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+<a href="https://www.tiktok.com/@hajisfamous1" target="_blank" rel="noopener" aria-label="Tiktok"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.71a8.21 8.21 0 0 0 4.76 1.52V6.69h-1z"/></svg></a>
+<a href="https://www.facebook.com/profile.php?id=61567071399135" target="_blank" rel="noopener" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 Hajis Famous Deli. All rights reserved.</div>
+      <div>Website by Broadway Web Dev.</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

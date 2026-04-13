@@ -1,0 +1,4 @@
+{
+  "buildCommand": "cd ../.. && node scripts/build.js --slug hajis",
+  "outputDirectory": "."
+}
