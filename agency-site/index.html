@@ -126,9 +126,11 @@
     }
 
     h2 {
-      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
       font-weight: 800;
       margin-bottom: 1rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     .section-intro {
@@ -215,10 +217,12 @@
     }
 
     h1 {
-      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-size: clamp(2.25rem, 6vw, 5rem);
       font-weight: 800;
       margin-bottom: 1.5rem;
-      line-height: 1.0;
+      line-height: 1.05;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     h1 em {
@@ -693,21 +697,57 @@
     }
 
     /* ── RESPONSIVE ──────────────────────────────────────── */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-
+    @media (max-width: 1024px) {
       .contact-wrap {
         grid-template-columns: 1fr;
         gap: 2.5rem;
       }
 
+      .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+
+      section { padding: clamp(3rem, 8vw, 5rem) 0; }
+
+      h1 { font-size: clamp(2rem, 8vw, 3rem); }
+      h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
+
+      .section-intro {
+        font-size: 1rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .hero-sub { font-size: 1rem; }
+
       .hero-actions { flex-direction: column; align-items: flex-start; }
       .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+
+      .services-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+
+      .portfolio-more { min-height: 200px; }
+
+      .contact-form { padding: 1.5rem; }
     }
 
     @media (max-width: 480px) {
-      .services-grid { grid-template-columns: 1fr; }
-      .steps { grid-template-columns: 1fr; }
+      .container { padding: 0 1.25rem; }
+      nav { padding: 0 1.25rem; }
+
+      h1 { font-size: clamp(1.75rem, 7vw, 2.5rem); }
+      h2 { font-size: clamp(1.4rem, 5vw, 1.75rem); }
+
+      .hero-eyebrow { font-size: 0.7rem; padding: 0.3rem 0.7rem; }
+
+      .step-num { font-size: 2.5rem; }
+
+      .nav-brand img { height: 32px; }
     }
   </style>
 </head>
