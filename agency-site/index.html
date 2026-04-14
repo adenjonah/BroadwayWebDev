@@ -54,12 +54,20 @@
     }
 
     .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
       font-family: 'Syne', sans-serif;
       font-size: 1.1rem;
       font-weight: 800;
       color: var(--text);
       text-decoration: none;
       letter-spacing: -0.02em;
+    }
+
+    .nav-brand img {
+      height: 40px;
+      width: auto;
     }
 
     .nav-brand span { color: var(--accent); }
@@ -663,10 +671,18 @@
     }
 
     .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-family: 'Syne', sans-serif;
       font-weight: 800;
       font-size: 1rem;
       letter-spacing: -0.02em;
+    }
+
+    .footer-brand img {
+      height: 32px;
+      width: auto;
     }
 
     .footer-brand span { color: var(--accent); }
@@ -699,7 +715,7 @@
 
   <!-- NAV -->
   <nav aria-label="Site navigation">
-    <a href="#hero" class="nav-brand">Broadway<span>.</span>web</a>
+    <a href="#hero" class="nav-brand"><img src="logo.png" alt="Broadway Web Development Agency logo" />Broadway<span>.</span>web</a>
     <ul class="nav-links" role="list">
       <li><a href="#services">Services</a></li>
       <li><a href="#work">Work</a></li>
@@ -938,7 +954,7 @@
   <footer>
     <div class="container">
       <div class="footer-inner">
-        <div class="footer-brand">Broadway<span>.</span>web</div>
+        <div class="footer-brand"><img src="logo.png" alt="Broadway Web Development Agency logo" />Broadway<span>.</span>web</div>
         <div class="footer-meta">New York City &nbsp;&middot;&nbsp; &copy; 2026 Broadway Web Dev</div>
       </div>
     </div>
