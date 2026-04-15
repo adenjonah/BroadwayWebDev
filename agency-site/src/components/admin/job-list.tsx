@@ -43,6 +43,9 @@ export default function JobList({ initialJobs }: JobListProps) {
   const [, setTick] = useState(0);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [placesModal, setPlacesModal] = useState<{ places: unknown[]; label: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const supabase = createClient();
@@ -53,7 +56,18 @@ export default function JobList({ initialJobs }: JobListProps) {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'scrape_jobs' },
         (payload) => {
+          // DELETE events have empty `new` — remove the job from the list
+          if (payload.eventType === 'DELETE') {
+            const deleted = payload.old as { id?: string };
+            if (deleted?.id) {
+              setJobs((prev) => prev.filter((j) => j.id !== deleted.id));
+            }
+            return;
+          }
+
           const updated = payload.new as ScrapeJob;
+          if (!updated?.id || !updated?.status) return;
+
           setJobs((prev) => {
             const exists = prev.find((j) => j.id === updated.id);
             if (exists) {
@@ -141,7 +155,7 @@ export default function JobList({ initialJobs }: JobListProps) {
                 >
                   {job.status.toUpperCase()}
                 </span>
-                <span className="job-card-time">{formatTime(job.created_at)}</span>
+                <span className="job-card-time">{mounted ? formatTime(job.created_at) : ''}</span>
               </div>
 
               <div className="job-card-location">
@@ -151,8 +165,8 @@ export default function JobList({ initialJobs }: JobListProps) {
 
               <div className="job-card-status-detail">
                 {isPending && 'Waking up worker machine...'}
-                {isRunning && `Scanning tiles — ${formatDuration(job.started_at, null)} elapsed`}
-                {job.status === 'completed' && `Finished in ${formatDuration(job.started_at, job.completed_at)}`}
+                {isRunning && `Scanning tiles — ${mounted ? formatDuration(job.started_at, null) : '...'} elapsed`}
+                {job.status === 'completed' && `Finished in ${mounted ? formatDuration(job.started_at, job.completed_at) : '...'}`}
                 {job.status === 'failed' && 'Job failed — see error below'}
               </div>
 
