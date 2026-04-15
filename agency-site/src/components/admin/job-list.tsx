@@ -143,6 +143,7 @@ export default function JobList({ initialJobs }: JobListProps) {
           const isPending = job.status === 'pending';
           const isRunning = job.status === 'running';
           const isActive = isPending || isRunning;
+          const isVerifying = isRunning && job.candidates_total > 0;
           const isFinished = job.status === 'completed' || job.status === 'failed';
           const isBusy = loadingAction === job.id;
 
@@ -165,16 +166,25 @@ export default function JobList({ initialJobs }: JobListProps) {
 
               <div className="job-card-status-detail">
                 {isPending && 'Waking up worker machine...'}
-                {isRunning && `Scanning tiles — ${mounted ? formatDuration(job.started_at, null) : '...'} elapsed`}
+                {isRunning && isVerifying && `Verifying candidates — ${mounted ? formatDuration(job.started_at, null) : '...'} elapsed`}
+                {isRunning && !isVerifying && `Scanning tiles — ${mounted ? formatDuration(job.started_at, null) : '...'} elapsed`}
                 {job.status === 'completed' && `Finished in ${mounted ? formatDuration(job.started_at, job.completed_at) : '...'}`}
                 {job.status === 'failed' && 'Job failed — see error below'}
               </div>
 
-              {(isPending || isRunning || job.status === 'completed') && (
+              {(isPending || isRunning || job.status === 'completed') && !isVerifying && (
                 <ProgressBar
                   current={job.tiles_done}
                   total={job.tiles_total || 1}
                   label={isPending ? 'Waiting to start...' : 'Tiles scanned'}
+                />
+              )}
+
+              {isVerifying && (
+                <ProgressBar
+                  current={job.candidates_verified}
+                  total={job.candidates_total}
+                  label="Verifying candidates (DDG)"
                 />
               )}
 

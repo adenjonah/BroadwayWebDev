@@ -80,16 +80,24 @@ def execute_job(job_id: str) -> None:
 
         print(f"  {len(candidates)} candidates for web verification")
 
+        # Update DB with candidate count so UI can show verification progress
+        db.update_job(job_id, candidates_total=len(candidates), candidates_verified=0)
+
         # Stage 3: DDG verification + insert leads
         qualified_count = 0
 
-        for candidate in candidates:
+        for i, candidate in enumerate(candidates):
             if not has_discoverable_website(candidate.name, candidate.address):
                 inserted = db.insert_lead(candidate, job_id)
                 if inserted:
                     qualified_count += 1
                     print(f"  Lead: {candidate.name}")
 
+            db.update_job(
+                job_id,
+                candidates_verified=i + 1,
+                qualified_count=qualified_count,
+            )
             _polite_sleep(VERIFY_DELAY, VERIFY_JITTER)
 
         # Store all found places for viewing in the admin UI
