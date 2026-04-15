@@ -47,11 +47,14 @@ class SupabaseDB:
     ) -> None:
         self.update_job(job_id, tiles_done=tiles_done, total_found=total_found)
 
-    def complete_job(self, job_id: str, qualified_count: int) -> None:
+    def complete_job(
+        self, job_id: str, qualified_count: int, found_places: list[dict]
+    ) -> None:
         self.update_job(
             job_id,
             status="completed",
             qualified_count=qualified_count,
+            found_places=found_places,
             completed_at=_now(),
         )
 

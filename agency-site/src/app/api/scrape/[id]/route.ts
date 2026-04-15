@@ -1,6 +1,33 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
+// Get job details including found_places
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  const { data: job } = await supabase
+    .from('scrape_jobs')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (!job) {
+    return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+  }
+
+  return NextResponse.json({ data: job });
+}
+
 // Cancel / abandon a job
 export async function DELETE(
   _request: NextRequest,
@@ -25,17 +52,10 @@ export async function DELETE(
     return NextResponse.json({ error: 'Job not found' }, { status: 404 });
   }
 
-  if (job.status === 'completed' || job.status === 'failed') {
-    return NextResponse.json({ error: 'Job already finished' }, { status: 400 });
-  }
-
+  // Delete the job entirely — removes from view
   await supabase
     .from('scrape_jobs')
-    .update({
-      status: 'failed',
-      error_message: 'Cancelled by user',
-      completed_at: new Date().toISOString(),
-    })
+    .delete()
     .eq('id', id);
 
   return NextResponse.json({ success: true });

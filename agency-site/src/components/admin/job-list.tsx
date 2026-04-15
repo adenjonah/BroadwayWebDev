@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { ScrapeJob } from '@/lib/types/scraping';
 import ProgressBar from './progress-bar';
+import PlacesModal from './places-modal';
 
 interface JobListProps {
   initialJobs: ScrapeJob[];
@@ -41,6 +42,7 @@ export default function JobList({ initialJobs }: JobListProps) {
   const [jobs, setJobs] = useState<ScrapeJob[]>(initialJobs);
   const [, setTick] = useState(0);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
+  const [placesModal, setPlacesModal] = useState<{ places: unknown[]; label: string } | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -80,6 +82,23 @@ export default function JobList({ initialJobs }: JobListProps) {
     setLoadingAction(jobId);
     try {
       await fetch(`/api/scrape/${jobId}`, { method: 'DELETE' });
+      setJobs((prev) => prev.filter((j) => j.id !== jobId));
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const viewPlaces = async (job: ScrapeJob) => {
+    setLoadingAction(job.id);
+    try {
+      const res = await fetch(`/api/scrape/${job.id}`);
+      const json = await res.json();
+      if (json.data?.found_places) {
+        setPlacesModal({
+          places: json.data.found_places,
+          label: `${job.center_lat.toFixed(3)}, ${job.center_lng.toFixed(3)} — ${job.radius_miles}mi`,
+        });
+      }
     } finally {
       setLoadingAction(null);
     }
@@ -168,19 +187,38 @@ export default function JobList({ initialJobs }: JobListProps) {
                   </button>
                 )}
                 {isFinished && (
-                  <button
-                    className="job-action-btn job-action-rerun"
-                    onClick={() => rerunJob(job.id)}
-                    disabled={isBusy}
-                  >
-                    {isBusy ? 'Starting...' : 'Re-run'}
-                  </button>
+                  <>
+                    {job.total_found > 0 && (
+                      <button
+                        className="job-action-btn job-action-view"
+                        onClick={() => viewPlaces(job)}
+                        disabled={isBusy}
+                      >
+                        {isBusy ? 'Loading...' : `View ${job.total_found} Places`}
+                      </button>
+                    )}
+                    <button
+                      className="job-action-btn job-action-rerun"
+                      onClick={() => rerunJob(job.id)}
+                      disabled={isBusy}
+                    >
+                      Re-run
+                    </button>
+                  </>
                 )}
               </div>
             </div>
           );
         })}
       </div>
+
+      {placesModal && (
+        <PlacesModal
+          places={placesModal.places as never[]}
+          jobLabel={placesModal.label}
+          onClose={() => setPlacesModal(null)}
+        />
+      )}
     </div>
   );
 }

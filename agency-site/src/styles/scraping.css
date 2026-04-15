@@ -283,6 +283,12 @@
   background: var(--accent-dim);
 }
 
+.job-action-view:hover:not(:disabled) {
+  border-color: #22c55e;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.08);
+}
+
 /* ── Progress Bar ─────────────────────────────────── */
 .progress-bar-wrap {
   margin: 0.5rem 0;
@@ -572,6 +578,130 @@
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 0 1.5rem 1.5rem;
+}
+
+/* ── Places Modal ─────────────────────────────────── */
+.places-modal-content {
+  max-width: 680px;
+}
+
+.places-modal-sub {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+.places-modal-filters {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.places-modal-filters input,
+.places-modal-filters select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+  color: var(--text);
+  font-size: 0.8rem;
+  outline: none;
+}
+
+.places-modal-filters input { flex: 1; }
+.places-modal-filters input:focus { border-color: var(--accent); }
+
+.places-modal-filters select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.5rem;
+  cursor: pointer;
+}
+
+.places-modal-list {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.places-modal-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.places-modal-item:last-child { border-bottom: none; }
+
+.places-modal-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.places-modal-item-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.places-modal-item-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.places-modal-item-badge.no-site {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.places-modal-item-badge.has-site {
+  color: var(--text-dim);
+  background: var(--bg);
+}
+
+.places-modal-item-details {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.places-modal-item-type {
+  text-transform: capitalize;
+}
+
+.places-modal-item-address {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.2rem;
+}
+
+.places-modal-item-links {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.3rem;
+}
+
+.places-modal-item-links a {
+  font-size: 0.75rem;
+  color: var(--accent);
+  transition: color 0.2s;
+}
+
+.places-modal-item-links a:hover { color: var(--accent-light); }
+
+.places-modal-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-dim);
+  font-size: 0.85rem;
 }
 
 /* ── Responsive ───────────────────────────────────── */

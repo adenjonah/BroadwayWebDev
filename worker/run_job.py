@@ -92,7 +92,14 @@ def execute_job(job_id: str) -> None:
 
             _polite_sleep(VERIFY_DELAY, VERIFY_JITTER)
 
-        db.complete_job(job_id, qualified_count=qualified_count)
+        # Store all found places for viewing in the admin UI
+        all_places = [p.to_dict() for p in clipped.values()]
+
+        db.complete_job(
+            job_id,
+            qualified_count=qualified_count,
+            found_places=all_places,
+        )
         print(f"Job {job_id} completed: {qualified_count} leads")
 
     except Exception as exc:
