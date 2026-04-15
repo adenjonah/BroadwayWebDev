@@ -45,7 +45,16 @@ npm run new-site -- <slug>       # Scaffold new client directory
 
 ## Lead Generation Scraper
 
-`scraper/` — Python tool that finds businesses with no website using Google Places API + DuckDuckGo verification.
+`scraper/` — Python tool that finds businesses with no website using Google Places API + DuckDuckGo verification. Results are "qualified" — filtered to real businesses that would benefit from a website (excludes parks, government, schools, etc.).
+
+### Output structure
+```
+scraper/searches/
+  47.738_-117.513_3.0mi/
+    all.json          # every place found
+    qualified.json    # no-website businesses = leads
+    summary.txt       # quick stats + lead list
+```
 
 ### Setup
 ```bash
@@ -56,12 +65,18 @@ pip install -r requirements.txt
 
 ### Usage
 ```bash
-npm run scrape -- --lat 40.7128 --lng -74.0060 --radius-miles 5 --out results.csv
-# Or with a query filter:
-npm run scrape -- --lat 40.7128 --lng -74.0060 --radius-miles 5 --query "restaurant" --out results.csv
+npm run scrape -- --lat 47.738 --lng -117.513 --radius-miles 3
+# With a query filter:
+npm run scrape -- --lat 47.738 --lng -117.513 --radius-miles 3 --query "restaurant"
 ```
 
 Key flags: `--no-verify-web` (skip DDG verification), `--tile-miles N` (sub-circle size for large areas).
+
+### Key files
+- `scraper/find_leads.py` — entry point
+- `scraper/places.py` — Google Places API client
+- `scraper/verify_web.py` — DDG secondary verification
+- `scraper/categories.py` — business vs non-business classification
 
 ## Environment
 

@@ -7,7 +7,7 @@
     "build": "node scripts/build.js",
     "build:all": "node scripts/build-all.js",
     "new-site": "bash scripts/new-site.sh",
-    "scrape": "python -m scraper.find_no_website"
+    "scrape": "python -m scraper.find_leads"
   },
   "dependencies": {
     "@sanity/client": "^6.0.0",

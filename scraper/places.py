@@ -47,10 +47,25 @@ class Place:
     website: str
     google_maps_url: str
     types: tuple[str, ...]
+    primary_type: str = ""
 
     @property
     def has_website(self) -> bool:
         return bool(self.website and self.website.strip())
+
+    def to_dict(self) -> dict:
+        return {
+            "place_id": self.place_id,
+            "name": self.name,
+            "address": self.address,
+            "lat": self.lat,
+            "lng": self.lng,
+            "phone": self.phone,
+            "website": self.website,
+            "google_maps_url": self.google_maps_url,
+            "primary_type": self.primary_type,
+            "types": list(self.types),
+        }
 
 
 def _parse_place(raw: dict) -> Place:
@@ -65,6 +80,7 @@ def _parse_place(raw: dict) -> Place:
         website=raw.get("websiteUri", ""),
         google_maps_url=raw.get("googleMapsUri", ""),
         types=tuple(raw.get("types") or []),
+        primary_type=raw.get("primaryType", ""),
     )
 
 

@@ -9,5 +9,7 @@ studio/node_modules/
 .venv/
 __pycache__/
 *.pyc
-# Scraper results
+# Scraper results (old CSV format)
 results*.csv
+# Scraper search output (contains local data, not committed)
+scraper/searches/
