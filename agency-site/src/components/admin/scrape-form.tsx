@@ -50,6 +50,9 @@ export default function ScrapeForm({ onJobCreated }: ScrapeFormProps) {
         return;
       }
 
+      if (data.workerStatus && data.workerStatus !== 'accepted') {
+        setError(`Job created but worker issue: ${data.workerStatus}`);
+      }
       onJobCreated(data.jobId);
     } catch {
       setError('Network error. Please try again.');

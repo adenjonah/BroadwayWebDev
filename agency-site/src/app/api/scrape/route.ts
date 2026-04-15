@@ -37,22 +37,38 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to create job' }, { status: 500 });
   }
 
-  // Trigger the Fly.io worker
+  // Trigger the Fly.io worker (30s timeout to allow cold start)
   const workerUrl = process.env.WORKER_URL;
   const workerToken = process.env.WORKER_AUTH_TOKEN;
+  let workerStatus = 'not_triggered';
 
   if (workerUrl && workerToken) {
     try {
-      await fetch(`${workerUrl}/run`, {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+
+      const res = await fetch(`${workerUrl}/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ job_id: job.id, auth_token: workerToken }),
+        signal: controller.signal,
       });
-    } catch {
-      // Worker might be sleeping — it will wake up.
-      // Job is in Supabase either way; worst case, retry manually.
+
+      clearTimeout(timeout);
+
+      if (res.ok) {
+        workerStatus = 'accepted';
+      } else {
+        const text = await res.text();
+        workerStatus = `error_${res.status}: ${text}`;
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'unknown error';
+      workerStatus = `fetch_failed: ${message}`;
     }
+  } else {
+    workerStatus = 'no_worker_config';
   }
 
-  return NextResponse.json({ jobId: job.id });
+  return NextResponse.json({ jobId: job.id, workerStatus });
 }
