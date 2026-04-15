@@ -1,0 +1,67 @@
+/* ── ADMIN PAGE STYLES ────────────────────────────────── */
+
+.admin-layout {
+  min-height: 100svh;
+  padding-top: var(--nav-h);
+}
+
+.admin-header {
+  border-bottom: 1px solid var(--border);
+  padding: 2rem 0;
+}
+
+.admin-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-header h1 {
+  font-size: 1.5rem;
+}
+
+.admin-header p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.admin-signout {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.admin-signout:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.admin-content {
+  padding: 2rem 0;
+}
+
+.admin-placeholder {
+  background: var(--bg-card);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.admin-placeholder h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-placeholder p {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
