@@ -51,7 +51,8 @@ export default function ScrapeForm({ onJobCreated }: ScrapeFormProps) {
       }
 
       if (data.workerStatus && data.workerStatus !== 'accepted') {
-        setError(`Job created but worker issue: ${data.workerStatus}`);
+        setError(`Job created but worker trigger failed: ${data.workerStatus}`);
+        // Still notify so the job shows in the list, but error stays visible
       }
       onJobCreated(data.jobId);
     } catch {
