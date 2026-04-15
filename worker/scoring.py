@@ -1,7 +1,9 @@
 """Lead scoring logic — mirrors the Postgres trigger for local calculation."""
 
 STRONG_BUSINESS_TYPES = frozenset({
-    "restaurant", "cafe", "bakery", "bar", "meal_delivery",
+    "restaurant", "cafe", "coffee_shop", "bakery", "bar", "deli",
+    "meal_delivery", "meal_takeaway", "fast_food_restaurant",
+    "salad_shop", "juice_shop", "snack_bar", "food_store", "food",
     "beauty_salon", "hair_care", "spa", "gym",
     "store", "clothing_store", "jewelry_store", "hardware_store",
     "grocery_or_supermarket", "liquor_store", "pet_store",
@@ -12,7 +14,7 @@ STRONG_BUSINESS_TYPES = frozenset({
     "hotel", "motel", "lodging",
     "laundry", "dry_cleaning", "florist", "funeral_home",
     "moving_company", "storage", "travel_agency",
-    "pharmacy", "physiotherapist", "meal_takeaway",
+    "pharmacy", "physiotherapist",
     "night_club", "bowling_alley", "amusement_park",
 })
 

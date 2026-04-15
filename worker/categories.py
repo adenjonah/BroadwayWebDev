@@ -77,10 +77,17 @@ NON_BUSINESS_TYPES = frozenset({
 STRONG_BUSINESS_TYPES = frozenset({
     "restaurant",
     "cafe",
+    "coffee_shop",
     "bakery",
     "bar",
+    "deli",
     "meal_delivery",
     "meal_takeaway",
+    "fast_food_restaurant",
+    "salad_shop",
+    "juice_shop",
+    "snack_bar",
+    "food_store",
     "food",
     # Services
     "plumber",
