@@ -10,10 +10,12 @@ interface ScrapeFormProps {
 export default function ScrapeForm({ onJobCreated }: ScrapeFormProps) {
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
-  const [radiusMiles, setRadiusMiles] = useState(3);
+  const [radiusText, setRadiusText] = useState('3');
   const [query, setQuery] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  const radiusMiles = parseFloat(radiusText) || 0;
 
   const handleLocationSelect = useCallback((newLat: number, newLng: number) => {
     setLat(newLat);
@@ -23,6 +25,11 @@ export default function ScrapeForm({ onJobCreated }: ScrapeFormProps) {
   const handleSubmit = async () => {
     if (lat === null || lng === null) {
       setError('Click the map to set a center point.');
+      return;
+    }
+
+    if (radiusMiles <= 0 || radiusMiles > 50) {
+      setError('Radius must be between 0.1 and 50 miles.');
       return;
     }
 
@@ -66,13 +73,24 @@ export default function ScrapeForm({ onJobCreated }: ScrapeFormProps) {
           <div className="form-group">
             <label htmlFor="radius">Radius (miles)</label>
             <input
-              type="number"
+              type="text"
+              inputMode="decimal"
               id="radius"
-              min={0.5}
-              max={50}
-              step={0.5}
-              value={radiusMiles}
-              onChange={(e) => setRadiusMiles(parseFloat(e.target.value) || 3)}
+              placeholder="3"
+              value={radiusText}
+              onChange={(e) => {
+                const val = e.target.value;
+                // Allow empty, digits, and one decimal point
+                if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                  setRadiusText(val);
+                }
+              }}
+              onBlur={() => {
+                // On blur, if empty or invalid, don't force a value — let the user keep typing
+                if (radiusText === '' || radiusText === '.') return;
+                const num = parseFloat(radiusText);
+                if (num > 50) setRadiusText('50');
+              }}
             />
           </div>
           <div className="form-group">
@@ -99,7 +117,7 @@ export default function ScrapeForm({ onJobCreated }: ScrapeFormProps) {
           type="button"
           className="btn btn-primary"
           onClick={handleSubmit}
-          disabled={submitting || lat === null}
+          disabled={submitting || lat === null || radiusMiles <= 0}
           style={{ width: '100%', justifyContent: 'center' }}
         >
           {submitting ? 'Starting...' : 'Start Scrape'}

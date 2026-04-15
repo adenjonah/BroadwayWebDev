@@ -140,6 +140,22 @@
   font-size: 0.85rem;
 }
 
+.map-picker-error {
+  font-size: 0.8rem;
+  color: #ef4444;
+  padding: 0.5rem 0.75rem;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.map-picker-hint {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
 /* ── Job List ─────────────────────────────────────── */
 .job-list h3 {
   font-size: 1.1rem;
@@ -174,6 +190,18 @@
 }
 
 .job-card:hover { border-color: var(--border-hover); }
+
+.job-card-active {
+  border-color: rgba(77, 142, 255, 0.2);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(77, 142, 255, 0.03) 100%);
+}
+
+.job-card-status-detail {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
 
 .job-card-header {
   display: flex;

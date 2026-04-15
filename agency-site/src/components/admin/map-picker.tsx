@@ -24,27 +24,41 @@ export default function MapPicker({
 }: MapPickerProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
-  const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
   const circleRef = useRef<google.maps.Circle | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [searchError, setSearchError] = useState('');
 
-  const updateMarker = useCallback(
+  const placeMarker = useCallback(
     (lat: number, lng: number) => {
       const map = mapInstance.current;
       if (!map || !window.google) return;
 
       const position = { lat, lng };
 
+      // Update or create draggable marker
       if (markerRef.current) {
-        markerRef.current.position = position;
+        markerRef.current.setPosition(position);
       } else {
-        markerRef.current = new google.maps.marker.AdvancedMarkerElement({
+        markerRef.current = new google.maps.Marker({
           map,
           position,
+          draggable: true,
+          title: 'Drag to reposition',
+        });
+
+        // Update position when marker is dragged
+        markerRef.current.addListener('dragend', () => {
+          const pos = markerRef.current?.getPosition();
+          if (pos && circleRef.current) {
+            circleRef.current.setCenter(pos);
+            onLocationSelect(pos.lat(), pos.lng());
+          }
         });
       }
 
+      // Update or create radius circle
       const radiusMeters = radiusMiles * 1609.34;
       if (circleRef.current) {
         circleRef.current.setCenter(position);
@@ -81,7 +95,7 @@ export default function MapPicker({
     window.initMap = () => setLoaded(true);
 
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places,marker&v=weekly`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places&v=weekly`;
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
@@ -98,7 +112,6 @@ export default function MapPicker({
     const map = new google.maps.Map(mapRef.current, {
       center: { lat: initialLat, lng: initialLng },
       zoom: 12,
-      mapId: 'broadway-scraper-map',
       disableDefaultUI: true,
       zoomControl: true,
       styles: [
@@ -110,18 +123,19 @@ export default function MapPicker({
       ],
     });
 
+    // Click anywhere on the map to place/move the pin
     map.addListener('click', (e: google.maps.MapMouseEvent) => {
       if (e.latLng) {
-        updateMarker(e.latLng.lat(), e.latLng.lng());
+        placeMarker(e.latLng.lat(), e.latLng.lng());
       }
     });
 
     mapInstance.current = map;
-  }, [loaded, initialLat, initialLng, updateMarker]);
+  }, [loaded, initialLat, initialLng, placeMarker]);
 
   // Update circle radius when radiusMiles changes
   useEffect(() => {
-    if (circleRef.current) {
+    if (circleRef.current && radiusMiles > 0) {
       const radiusMeters = radiusMiles * 1609.34;
       circleRef.current.setRadius(radiusMeters);
       const map = mapInstance.current;
@@ -132,18 +146,23 @@ export default function MapPicker({
   }, [radiusMiles]);
 
   const handleSearch = async () => {
-    if (!searchValue.trim() || !window.google) return;
+    const query = searchValue.trim();
+    if (!query || !window.google) return;
+
+    setSearchError('');
 
     const geocoder = new google.maps.Geocoder();
     try {
-      const result = await geocoder.geocode({ address: searchValue });
-      if (result.results[0]) {
-        const loc = result.results[0].geometry.location;
-        updateMarker(loc.lat(), loc.lng());
+      const response = await geocoder.geocode({ address: query });
+      if (response.results && response.results.length > 0) {
+        const loc = response.results[0].geometry.location;
+        placeMarker(loc.lat(), loc.lng());
         setSearchValue('');
+      } else {
+        setSearchError('No results found.');
       }
     } catch {
-      // Geocoding failed silently
+      setSearchError('Search failed. Try a more specific address.');
     }
   };
 
@@ -152,17 +171,19 @@ export default function MapPicker({
       <div className="map-picker-search">
         <input
           type="text"
-          placeholder="Search for an address..."
+          placeholder="Search for a city or address..."
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onChange={(e) => { setSearchValue(e.target.value); setSearchError(''); }}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearch(); } }}
         />
         <button type="button" onClick={handleSearch} className="btn btn-outline">
-          Search
+          Go
         </button>
       </div>
+      {searchError && <div className="map-picker-error">{searchError}</div>}
       <div ref={mapRef} className="map-picker-canvas" />
       {!loaded && <div className="map-picker-loading">Loading map...</div>}
+      <div className="map-picker-hint">Click to place pin &middot; Drag pin to reposition</div>
     </div>
   );
 }

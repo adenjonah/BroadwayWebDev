@@ -10,10 +10,17 @@ interface JobListProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'var(--text-dim)',
+  pending: '#f59e0b',
   running: 'var(--accent)',
   completed: '#22c55e',
   failed: '#ef4444',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'Pending — waiting for worker to start...',
+  running: 'Running',
+  completed: 'Completed',
+  failed: 'Failed',
 };
 
 function formatTime(iso: string | null): string {
@@ -26,8 +33,20 @@ function formatTime(iso: string | null): string {
   });
 }
 
+function formatDuration(start: string | null, end: string | null): string {
+  if (!start) return '';
+  const from = new Date(start).getTime();
+  const to = end ? new Date(end).getTime() : Date.now();
+  const seconds = Math.round((to - from) / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes}m ${secs}s`;
+}
+
 export default function JobList({ initialJobs }: JobListProps) {
   const [jobs, setJobs] = useState<ScrapeJob[]>(initialJobs);
+  const [, setTick] = useState(0);
 
   // Subscribe to realtime updates on scrape_jobs
   useEffect(() => {
@@ -56,6 +75,15 @@ export default function JobList({ initialJobs }: JobListProps) {
     };
   }, []);
 
+  // Tick every 5s to update elapsed time for running jobs
+  useEffect(() => {
+    const hasActive = jobs.some((j) => j.status === 'pending' || j.status === 'running');
+    if (!hasActive) return;
+
+    const interval = setInterval(() => setTick((t) => t + 1), 5000);
+    return () => clearInterval(interval);
+  }, [jobs]);
+
   if (jobs.length === 0) {
     return (
       <div className="job-list-empty">
@@ -68,41 +96,58 @@ export default function JobList({ initialJobs }: JobListProps) {
     <div className="job-list">
       <h3>Scrape Jobs</h3>
       <div className="job-list-items">
-        {jobs.map((job) => (
-          <div key={job.id} className="job-card">
-            <div className="job-card-header">
-              <span
-                className="job-status-badge"
-                style={{ color: STATUS_COLORS[job.status] }}
-              >
-                {job.status}
-              </span>
-              <span className="job-card-time">{formatTime(job.created_at)}</span>
+        {jobs.map((job) => {
+          const isPending = job.status === 'pending';
+          const isRunning = job.status === 'running';
+          const isActive = isPending || isRunning;
+
+          return (
+            <div key={job.id} className={`job-card${isActive ? ' job-card-active' : ''}`}>
+              <div className="job-card-header">
+                <span
+                  className="job-status-badge"
+                  style={{ color: STATUS_COLORS[job.status] }}
+                >
+                  {job.status.toUpperCase()}
+                </span>
+                <span className="job-card-time">{formatTime(job.created_at)}</span>
+              </div>
+
+              <div className="job-card-location">
+                {job.center_lat.toFixed(3)}, {job.center_lng.toFixed(3)} — {job.radius_miles}mi
+                {job.query_filter && <span className="job-card-query"> &middot; &ldquo;{job.query_filter}&rdquo;</span>}
+              </div>
+
+              {/* Status detail line */}
+              <div className="job-card-status-detail">
+                {isPending && 'Waking up worker machine...'}
+                {isRunning && `Scanning tiles — ${formatDuration(job.started_at, null)} elapsed`}
+                {job.status === 'completed' && `Finished in ${formatDuration(job.started_at, job.completed_at)}`}
+                {job.status === 'failed' && 'Job failed — see error below'}
+              </div>
+
+              {/* Progress bar for all active + completed jobs */}
+              {(isPending || isRunning || job.status === 'completed') && (
+                <ProgressBar
+                  current={job.tiles_done}
+                  total={job.tiles_total || 1}
+                  label={isPending ? 'Waiting to start...' : 'Tiles scanned'}
+                />
+              )}
+
+              <div className="job-card-stats">
+                <span>Places found: {job.total_found}</span>
+                <span>Qualified leads: {job.qualified_count}</span>
+              </div>
+
+              {job.error_message && (
+                <div className="job-card-error">
+                  <strong>Error:</strong> {job.error_message}
+                </div>
+              )}
             </div>
-
-            <div className="job-card-location">
-              {job.center_lat.toFixed(3)}, {job.center_lng.toFixed(3)} — {job.radius_miles}mi
-              {job.query_filter && <span className="job-card-query"> &middot; &ldquo;{job.query_filter}&rdquo;</span>}
-            </div>
-
-            {(job.status === 'running' || job.status === 'completed') && (
-              <ProgressBar
-                current={job.tiles_done}
-                total={job.tiles_total}
-                label="Tiles scanned"
-              />
-            )}
-
-            <div className="job-card-stats">
-              <span>Found: {job.total_found}</span>
-              <span>Leads: {job.qualified_count}</span>
-            </div>
-
-            {job.error_message && (
-              <div className="job-card-error">{job.error_message}</div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
