@@ -43,8 +43,29 @@ npm run new-site -- <slug>       # Scaffold new client directory
 - `scripts/helpers.js`: keep under 200 lines
 - Individual helper functions: keep under 30 lines each
 
+## Lead Generation Scraper
+
+`scraper/` — Python tool that finds businesses with no website using Google Places API + DuckDuckGo verification.
+
+### Setup
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Usage
+```bash
+npm run scrape -- --lat 40.7128 --lng -74.0060 --radius-miles 5 --out results.csv
+# Or with a query filter:
+npm run scrape -- --lat 40.7128 --lng -74.0060 --radius-miles 5 --query "restaurant" --out results.csv
+```
+
+Key flags: `--no-verify-web` (skip DDG verification), `--tile-miles N` (sub-circle size for large areas).
+
 ## Environment
 
 - Node.js with ESM (`"type": "module"` in package.json)
 - Dependencies: `@sanity/client`, `dotenv`
-- Sanity credentials in `.env` (never committed)
+- Python 3 with venv for the scraper (`requirements.txt`)
+- Sanity credentials + `GOOGLE_MAPS_API_KEY` in `.env` (never committed)
