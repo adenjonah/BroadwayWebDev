@@ -1,0 +1,523 @@
+/* ── SCRAPING PAGE STYLES ─────────────────────────────── */
+
+/* Tabs */
+.scrape-tabs {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.scrape-tabs .container {
+  display: flex;
+  gap: 0;
+}
+
+.scrape-tab {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0.85rem 1.25rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.scrape-tab:hover { color: var(--text); }
+
+.scrape-tab.active {
+  color: var(--accent);
+}
+
+.scrape-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* Scrape panel — form + jobs side by side */
+.scrape-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── Scrape Form ──────────────────────────────────── */
+.scrape-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.scrape-form h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.scrape-form-hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 1.25rem;
+}
+
+.scrape-form-controls {
+  margin-top: 1.25rem;
+}
+
+.scrape-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.scrape-form-coords {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 0.75rem;
+  font-family: monospace;
+}
+
+.scrape-form-error {
+  font-size: 0.85rem;
+  color: #ef4444;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Map Picker ───────────────────────────────────── */
+.map-picker {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.map-picker-search {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+
+.map-picker-search input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.map-picker-search input:focus {
+  border-color: var(--accent);
+}
+
+.map-picker-search .btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.map-picker-canvas {
+  width: 100%;
+  height: 320px;
+  background: var(--bg-elevated);
+}
+
+.map-picker-loading {
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+/* ── Job List ─────────────────────────────────────── */
+.job-list h3 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.job-list-empty {
+  background: var(--bg-card);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.job-list-empty p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.job-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.job-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  transition: border-color 0.2s;
+}
+
+.job-card:hover { border-color: var(--border-hover); }
+
+.job-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.job-status-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.job-card-time {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.job-card-location {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.job-card-query {
+  color: var(--text-dim);
+}
+
+.job-card-stats {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.75rem;
+}
+
+.job-card-error {
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-top: 0.5rem;
+}
+
+/* ── Progress Bar ─────────────────────────────────── */
+.progress-bar-wrap {
+  margin: 0.5rem 0;
+}
+
+.progress-bar-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-bottom: 0.35rem;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progress-bar-text {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+/* ── Leads Section ────────────────────────────────── */
+.leads-section h3 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.leads-filters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.leads-filters input,
+.leads-filters select {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.leads-filters input:focus,
+.leads-filters select:focus {
+  border-color: var(--accent);
+}
+
+.leads-search {
+  flex: 1;
+  min-width: 200px;
+}
+
+.leads-filters select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9a9a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.leads-filters select option { background: var(--bg-card); }
+
+/* Table */
+.leads-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.leads-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.leads-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.leads-th-sort { cursor: pointer; }
+.leads-th-sort:hover { color: var(--text-secondary); }
+.leads-th-check { width: 40px; }
+
+.leads-table td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.leads-row {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.leads-row:hover { background: var(--bg-card); }
+.leads-row-selected { background: var(--accent-dim); }
+
+.leads-cell-name {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.leads-cell-score {
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.leads-stage-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.leads-cell-date {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.leads-empty {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 3rem 1rem !important;
+}
+
+/* Pagination */
+.leads-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.leads-pagination-info {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* ── Bulk Actions ─────────────────────────────────── */
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--accent-dim);
+  border: 1px solid rgba(77, 142, 255, 0.2);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+.bulk-actions-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.bulk-actions-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+/* ── Modal ────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.5rem 0;
+}
+
+.modal-header h2 {
+  font-size: 1.2rem;
+}
+
+.modal-close {
+  font-size: 1.5rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(--text); }
+
+.modal-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.modal-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.modal-field a {
+  color: var(--accent);
+  transition: color 0.2s;
+}
+
+.modal-field a:hover { color: var(--accent-light); }
+
+.modal-types {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-align: right;
+}
+
+.modal-score {
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.modal-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1rem 0;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 1024px) {
+  .scrape-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .scrape-form-row { grid-template-columns: 1fr; }
+  .leads-filters { flex-direction: column; }
+  .leads-search { min-width: 100%; }
+}

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import AdminNav from '@/components/admin/admin-nav';
 import '@/styles/admin.css';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="admin-layout">
+      <AdminNav userEmail={user.email ?? ''} />
       {children}
     </div>
   );

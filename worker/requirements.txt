@@ -1,0 +1,6 @@
+flask>=3.0
+gunicorn>=22.0
+requests>=2.32
+python-dotenv>=1.0
+duckduckgo-search>=7.0
+supabase>=2.0

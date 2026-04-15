@@ -13,3 +13,6 @@ __pycache__/
 results*.csv
 # Scraper search output (contains local data, not committed)
 scraper/searches/
+# Supabase CLI local state
+supabase/.temp/
+.vercel
