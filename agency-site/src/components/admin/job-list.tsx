@@ -16,13 +16,6 @@ const STATUS_COLORS: Record<string, string> = {
   failed: '#ef4444',
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: 'Pending — waiting for worker to start...',
-  running: 'Running',
-  completed: 'Completed',
-  failed: 'Failed',
-};
-
 function formatTime(iso: string | null): string {
   if (!iso) return '—';
   return new Date(iso).toLocaleString('en-US', {
@@ -47,8 +40,8 @@ function formatDuration(start: string | null, end: string | null): string {
 export default function JobList({ initialJobs }: JobListProps) {
   const [jobs, setJobs] = useState<ScrapeJob[]>(initialJobs);
   const [, setTick] = useState(0);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
-  // Subscribe to realtime updates on scrape_jobs
   useEffect(() => {
     const supabase = createClient();
 
@@ -75,7 +68,6 @@ export default function JobList({ initialJobs }: JobListProps) {
     };
   }, []);
 
-  // Tick every 5s to update elapsed time for running jobs
   useEffect(() => {
     const hasActive = jobs.some((j) => j.status === 'pending' || j.status === 'running');
     if (!hasActive) return;
@@ -83,6 +75,24 @@ export default function JobList({ initialJobs }: JobListProps) {
     const interval = setInterval(() => setTick((t) => t + 1), 5000);
     return () => clearInterval(interval);
   }, [jobs]);
+
+  const cancelJob = async (jobId: string) => {
+    setLoadingAction(jobId);
+    try {
+      await fetch(`/api/scrape/${jobId}`, { method: 'DELETE' });
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const rerunJob = async (jobId: string) => {
+    setLoadingAction(jobId);
+    try {
+      await fetch(`/api/scrape/${jobId}`, { method: 'POST' });
+    } finally {
+      setLoadingAction(null);
+    }
+  };
 
   if (jobs.length === 0) {
     return (
@@ -100,6 +110,8 @@ export default function JobList({ initialJobs }: JobListProps) {
           const isPending = job.status === 'pending';
           const isRunning = job.status === 'running';
           const isActive = isPending || isRunning;
+          const isFinished = job.status === 'completed' || job.status === 'failed';
+          const isBusy = loadingAction === job.id;
 
           return (
             <div key={job.id} className={`job-card${isActive ? ' job-card-active' : ''}`}>
@@ -118,7 +130,6 @@ export default function JobList({ initialJobs }: JobListProps) {
                 {job.query_filter && <span className="job-card-query"> &middot; &ldquo;{job.query_filter}&rdquo;</span>}
               </div>
 
-              {/* Status detail line */}
               <div className="job-card-status-detail">
                 {isPending && 'Waking up worker machine...'}
                 {isRunning && `Scanning tiles — ${formatDuration(job.started_at, null)} elapsed`}
@@ -126,7 +137,6 @@ export default function JobList({ initialJobs }: JobListProps) {
                 {job.status === 'failed' && 'Job failed — see error below'}
               </div>
 
-              {/* Progress bar for all active + completed jobs */}
               {(isPending || isRunning || job.status === 'completed') && (
                 <ProgressBar
                   current={job.tiles_done}
@@ -145,6 +155,28 @@ export default function JobList({ initialJobs }: JobListProps) {
                   <strong>Error:</strong> {job.error_message}
                 </div>
               )}
+
+              {/* Action buttons */}
+              <div className="job-card-actions">
+                {isActive && (
+                  <button
+                    className="job-action-btn job-action-cancel"
+                    onClick={() => cancelJob(job.id)}
+                    disabled={isBusy}
+                  >
+                    {isBusy ? 'Cancelling...' : 'Cancel'}
+                  </button>
+                )}
+                {isFinished && (
+                  <button
+                    className="job-action-btn job-action-rerun"
+                    onClick={() => rerunJob(job.id)}
+                    disabled={isBusy}
+                  >
+                    {isBusy ? 'Starting...' : 'Re-run'}
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
