@@ -204,6 +204,13 @@ export default function JobList({ initialJobs }: JobListProps) {
                     >
                       Re-run
                     </button>
+                    <button
+                      className="job-action-btn job-action-cancel"
+                      onClick={() => cancelJob(job.id)}
+                      disabled={isBusy}
+                    >
+                      Delete
+                    </button>
                   </>
                 )}
               </div>
