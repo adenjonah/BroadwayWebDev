@@ -40,6 +40,15 @@ class SupabaseDB:
             status="running",
             started_at=_now(),
             tiles_total=tiles_total,
+            heartbeat_at=_now(),
+        )
+
+    def resume_job(self, job_id: str) -> None:
+        """Mark a resumed job running without resetting its progress fields."""
+        self.update_job(
+            job_id,
+            status="running",
+            heartbeat_at=_now(),
         )
 
     def update_progress(
@@ -62,7 +71,51 @@ class SupabaseDB:
             tiles_done=tiles_done,
             current_category=category,
             total_found=total_found,
+            heartbeat_at=_now(),
         )
+
+    def persist_found_places(
+        self,
+        job_id: str,
+        places: list[dict],
+    ) -> None:
+        """Write the accumulated place list so a crashed worker can resume."""
+        self.update_job(
+            job_id,
+            found_places=places,
+            total_found=len(places),
+            heartbeat_at=_now(),
+        )
+
+    def update_heartbeat(self, job_id: str) -> None:
+        self.update_job(job_id, heartbeat_at=_now())
+
+    def update_verify_progress(
+        self,
+        job_id: str,
+        candidates_total: int | None = None,
+        candidates_verified: int | None = None,
+        qualified_count: int | None = None,
+    ) -> None:
+        fields: dict = {"heartbeat_at": _now()}
+        if candidates_total is not None:
+            fields["candidates_total"] = candidates_total
+        if candidates_verified is not None:
+            fields["candidates_verified"] = candidates_verified
+        if qualified_count is not None:
+            fields["qualified_count"] = qualified_count
+        self.update_job(job_id, **fields)
+
+    def get_existing_lead_place_ids(self, job_id: str) -> set[str]:
+        """Return place_ids already written as leads for this job — used to
+        skip candidates that were already verified in a previous (crashed) run."""
+        result = (
+            self._client.table("leads")
+            .select("place_id")
+            .eq("scrape_job_id", job_id)
+            .execute()
+        )
+        return {row["place_id"] for row in (result.data or []) if row.get("place_id")}
 
     def complete_job(
         self, job_id: str, qualified_count: int, found_places: list[dict]
