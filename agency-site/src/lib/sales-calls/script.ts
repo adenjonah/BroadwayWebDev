@@ -105,8 +105,8 @@ export const SCRIPT: Record<string, CallNode> = {
   pattern_interrupt: {
     id: 'pattern_interrupt',
     speaker: 'setter',
-    line: "Awesome. Quick one — I promise this isn't a sales pitch yet. Do you want the good news or the bad news first?",
-    note: "THE pattern interrupt. Breaks the 'another telemarketer' reflex. Say it playfully, not salesy. Pause after — make them pick. If they can't pick, default to bad news (curiosity gap).",
+    line: "Awesome. OK, weird question — do you want the good news or the bad news first?",
+    note: "THE pattern interrupt. \"Weird question\" primes them for something unusual without tipping it's a sales line. Say it playfully, not salesy. Pause after — make them pick. If they can't pick, default to bad news (curiosity gap). DON'T apologize or disclaim — it weakens the interrupt.",
     responses: [
       { label: "Bad news first", next: 'bad_news', tone: 'positive' },
       { label: "Good news first", next: 'good_news', tone: 'positive' },
@@ -120,8 +120,8 @@ export const SCRIPT: Record<string, CallNode> = {
   reframe_playful: {
     id: 'reframe_playful',
     speaker: 'setter',
-    line: "Honestly? Kind of — but not the pushy kind. I found something about {business_name} online that you'd probably want to know about. 30 seconds and you can hang up if it's not useful. Good news or bad news first?",
-    note: "Transparent + playful beats evasive. Give them back control (\"you can hang up\") — paradoxically lowers their defenses.",
+    line: "Honestly? Kind of. But I found something about {business_name} online that you'd actually want to know — 30 seconds and you can hang up if it's not useful. Good news or bad news first?",
+    note: "Transparent beats evasive. Admit it's a sales call, then pivot fast to the specific value. Giving them permission to hang up (\"you can hang up\") paradoxically lowers their defenses.",
     responses: [
       { label: "Bad news first", next: 'bad_news', tone: 'positive' },
       { label: "Good news first", next: 'good_news', tone: 'positive' },
