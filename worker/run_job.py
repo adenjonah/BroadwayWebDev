@@ -13,7 +13,7 @@ from places import (
     CATEGORY_QUERIES,
 )
 from categories import is_qualified_business
-from verify_web import has_discoverable_website
+from verify_web import find_discoverable_website
 from db import SupabaseDB
 
 VERIFY_DELAY = 4.0
@@ -124,15 +124,22 @@ def execute_job(job_id: str) -> None:
         # Update DB with candidate count so UI can show verification progress
         db.update_job(job_id, candidates_total=len(candidates), candidates_verified=0)
 
-        # Stage 3: DDG verification + insert leads
+        # Stage 3: DDG secondary check + insert every qualified candidate.
+        # If DDG finds a website we still insert — just with the URL recorded
+        # so the scoring trigger drops the "no website" +1.
         qualified_count = 0
+        ddg_urls: dict[str, str] = {}
 
         for i, candidate in enumerate(candidates):
-            if not has_discoverable_website(candidate.name, candidate.address):
-                inserted = db.insert_lead(candidate, job_id)
-                if inserted:
-                    qualified_count += 1
-                    print(f"  Lead: {candidate.name}")
+            discovered = find_discoverable_website(candidate.name, candidate.address)
+            if discovered:
+                ddg_urls[candidate.place_id] = discovered
+
+            inserted = db.insert_lead(candidate, job_id, discovered_website=discovered)
+            if inserted:
+                qualified_count += 1
+                tag = f" (discovered: {discovered})" if discovered else ""
+                print(f"  Lead: {candidate.name}{tag}")
 
             db.update_job(
                 job_id,
@@ -141,8 +148,15 @@ def execute_job(job_id: str) -> None:
             )
             _polite_sleep(VERIFY_DELAY, VERIFY_JITTER)
 
-        # Store all found places for viewing in the admin UI
-        all_places = [p.to_dict() for p in clipped.values()]
+        # Store all found places for viewing in the admin UI. Overlay any
+        # DDG-discovered URLs onto the place dicts so the "View Places"
+        # modal can show the correct "has website" state.
+        all_places = []
+        for p in clipped.values():
+            d = p.to_dict()
+            if p.place_id in ddg_urls:
+                d["discovered_website"] = ddg_urls[p.place_id]
+            all_places.append(d)
 
         db.complete_job(
             job_id,

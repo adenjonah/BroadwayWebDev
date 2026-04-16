@@ -52,5 +52,6 @@ export interface Lead {
   stage: LeadStage;
   notes: string;
   discovered_at: string;
+  discovered_website: string;
   scrape_job_id: string | null;
 }

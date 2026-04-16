@@ -83,9 +83,24 @@ class SupabaseDB:
             completed_at=_now(),
         )
 
-    def insert_lead(self, place: Place, job_id: str) -> bool:
-        """Insert a lead. Returns True if inserted, False if duplicate."""
-        score = calculate_lead_score(place.phone, place.primary_type, place.types)
+    def insert_lead(
+        self,
+        place: Place,
+        job_id: str,
+        discovered_website: str = "",
+    ) -> bool:
+        """Insert a lead. Returns True if inserted, False if duplicate.
+
+        discovered_website is whatever DDG turned up during secondary
+        verification (empty string if nothing). The Postgres scoring
+        trigger uses it to decide whether to grant the "no website" +1.
+        """
+        score = calculate_lead_score(
+            place.phone,
+            place.primary_type,
+            place.types,
+            discovered_website,
+        )
 
         row = {
             "place_id": place.place_id,
@@ -98,6 +113,7 @@ class SupabaseDB:
             "primary_type": place.primary_type,
             "types": list(place.types),
             "lead_score": score,
+            "discovered_website": discovered_website,
             "scrape_job_id": job_id,
         }
 

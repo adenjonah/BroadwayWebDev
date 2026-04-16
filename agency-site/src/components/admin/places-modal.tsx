@@ -8,6 +8,7 @@ interface FoundPlace {
   address: string;
   phone: string;
   website: string;
+  discovered_website?: string;
   google_maps_url: string;
   primary_type: string;
   types: string[];
@@ -23,14 +24,18 @@ export default function PlacesModal({ places, jobLabel, onClose }: PlacesModalPr
   const [filter, setFilter] = useState<'all' | 'no_website' | 'has_website'>('all');
   const [search, setSearch] = useState('');
 
+  // A place is considered website-less only if BOTH Google and our DDG
+  // secondary verification found nothing.
+  const hasAnyWebsite = (p: FoundPlace) => Boolean(p.website || p.discovered_website);
+
   const filtered = places.filter((p) => {
-    if (filter === 'no_website' && p.website) return false;
-    if (filter === 'has_website' && !p.website) return false;
+    if (filter === 'no_website' && hasAnyWebsite(p)) return false;
+    if (filter === 'has_website' && !hasAnyWebsite(p)) return false;
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
-  const noWebsiteCount = places.filter((p) => !p.website).length;
+  const noWebsiteCount = places.filter((p) => !hasAnyWebsite(p)).length;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -58,29 +63,42 @@ export default function PlacesModal({ places, jobLabel, onClose }: PlacesModalPr
         </div>
 
         <div className="places-modal-list">
-          {filtered.map((place) => (
-            <div key={place.place_id} className="places-modal-item">
-              <div className="places-modal-item-header">
-                <span className="places-modal-item-name">{place.name}</span>
-                <span className={`places-modal-item-badge ${place.website ? 'has-site' : 'no-site'}`}>
-                  {place.website ? 'Has website' : 'No website'}
-                </span>
+          {filtered.map((place) => {
+            const websiteBadge =
+              place.website ? 'Has website'
+              : place.discovered_website ? 'Website (discovered)'
+              : 'No website';
+            const badgeClass =
+              place.website ? 'has-site'
+              : place.discovered_website ? 'discovered-site'
+              : 'no-site';
+            return (
+              <div key={place.place_id} className="places-modal-item">
+                <div className="places-modal-item-header">
+                  <span className="places-modal-item-name">{place.name}</span>
+                  <span className={`places-modal-item-badge ${badgeClass}`}>
+                    {websiteBadge}
+                  </span>
+                </div>
+                <div className="places-modal-item-details">
+                  {place.primary_type && <span className="places-modal-item-type">{place.primary_type}</span>}
+                  {place.phone && <span>{place.phone}</span>}
+                </div>
+                {place.address && <div className="places-modal-item-address">{place.address}</div>}
+                <div className="places-modal-item-links">
+                  {place.google_maps_url && (
+                    <a href={place.google_maps_url} target="_blank" rel="noopener noreferrer">Maps &rarr;</a>
+                  )}
+                  {place.website && (
+                    <a href={place.website} target="_blank" rel="noopener noreferrer">Website &rarr;</a>
+                  )}
+                  {!place.website && place.discovered_website && (
+                    <a href={place.discovered_website} target="_blank" rel="noopener noreferrer">Discovered &rarr;</a>
+                  )}
+                </div>
               </div>
-              <div className="places-modal-item-details">
-                {place.primary_type && <span className="places-modal-item-type">{place.primary_type}</span>}
-                {place.phone && <span>{place.phone}</span>}
-              </div>
-              {place.address && <div className="places-modal-item-address">{place.address}</div>}
-              <div className="places-modal-item-links">
-                {place.google_maps_url && (
-                  <a href={place.google_maps_url} target="_blank" rel="noopener noreferrer">Maps &rarr;</a>
-                )}
-                {place.website && (
-                  <a href={place.website} target="_blank" rel="noopener noreferrer">Website &rarr;</a>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
           {filtered.length === 0 && (
             <div className="places-modal-empty">No places match your filters.</div>
           )}

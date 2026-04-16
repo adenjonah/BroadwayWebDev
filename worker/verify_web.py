@@ -62,15 +62,19 @@ def _is_directory(url: str) -> bool:
     return any(d == dd or d.endswith("." + dd) for dd in DIRECTORY_DOMAINS)
 
 
-def has_discoverable_website(name: str, address: str, max_results: int = 10) -> bool:
-    """Returns True if a non-directory website appears in search results."""
+def find_discoverable_website(name: str, address: str, max_results: int = 10) -> str:
+    """Returns the first non-directory website URL found, or "" if none.
+
+    Used to populate the lead's `discovered_website` column so leads where
+    DDG turned up a site still become leads — just with a lower score.
+    """
     if not name:
-        return False
+        return ""
     query = f'"{name}" {address}'.strip()
     try:
         results = list(DDGS().text(query, max_results=max_results))
     except Exception:
-        return False
+        return ""
 
     for r in results:
         href = r.get("href") or ""
@@ -78,8 +82,13 @@ def has_discoverable_website(name: str, address: str, max_results: int = 10) -> 
             continue
         if _is_directory(href):
             continue
-        return True
-    return False
+        return href
+    return ""
+
+
+def has_discoverable_website(name: str, address: str, max_results: int = 10) -> bool:
+    """Back-compat wrapper around find_discoverable_website."""
+    return bool(find_discoverable_website(name, address, max_results))
 
 
 def polite_sleep(seconds: float = 1.5) -> None:

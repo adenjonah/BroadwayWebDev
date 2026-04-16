@@ -71,6 +71,19 @@ export default function LeadModal({ lead, onClose, onUpdate }: LeadModalProps) {
           </div>
 
           <div className="modal-field">
+            <span className="modal-label">Discovered Site</span>
+            <span>
+              {lead.discovered_website ? (
+                <a href={lead.discovered_website} target="_blank" rel="noopener noreferrer">
+                  {lead.discovered_website} &rarr;
+                </a>
+              ) : (
+                '—'
+              )}
+            </span>
+          </div>
+
+          <div className="modal-field">
             <span className="modal-label">Lead Score</span>
             <span className="modal-score">{scoreStars}</span>
           </div>

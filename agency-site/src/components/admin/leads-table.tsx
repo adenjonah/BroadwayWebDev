@@ -181,6 +181,7 @@ export default function LeadsTable({ initialData, initialTotal }: LeadsTableProp
               <th onClick={() => handleSort('lead_score')} className="leads-th-sort">
                 Score{sortArrow('lead_score')}
               </th>
+              <th>Website</th>
               <th onClick={() => handleSort('stage')} className="leads-th-sort">
                 Stage{sortArrow('stage')}
               </th>
@@ -210,6 +211,21 @@ export default function LeadsTable({ initialData, initialTotal }: LeadsTableProp
                   {'★'.repeat(lead.lead_score)}
                   {'☆'.repeat(5 - lead.lead_score)}
                 </td>
+                <td className="leads-cell-website" onClick={(e) => e.stopPropagation()}>
+                  {lead.discovered_website ? (
+                    <a
+                      href={lead.discovered_website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="leads-website-link"
+                      title={lead.discovered_website}
+                    >
+                      Found
+                    </a>
+                  ) : (
+                    <span className="leads-website-none">None</span>
+                  )}
+                </td>
                 <td>
                   <span
                     className="leads-stage-badge"
@@ -228,7 +244,7 @@ export default function LeadsTable({ initialData, initialTotal }: LeadsTableProp
             ))}
             {leads.length === 0 && (
               <tr>
-                <td colSpan={7} className="leads-empty">No leads found.</td>
+                <td colSpan={8} className="leads-empty">No leads found.</td>
               </tr>
             )}
           </tbody>
