@@ -55,7 +55,7 @@ export const SCRIPT: Record<string, CallNode> = {
   reframe_identity: {
     id: 'reframe_identity',
     speaker: 'setter',
-    line: "Fair question — this is {setter_name} with Broadway Web Dev. Are you the owner of {business_name}?",
+    line: "Fair question — this is [your name] with Broadway Web Dev. Are you the owner of {business_name}?",
     note: "Don't pitch yet. Re-anchor on owner qualification. Confident tone earns the next question. No fillers like \"just need to confirm\" — they weaken the ask.",
     responses: [
       { label: "Yes I'm the owner", next: 'pattern_interrupt', tone: 'positive' },
@@ -69,8 +69,8 @@ export const SCRIPT: Record<string, CallNode> = {
   gatekeeper_assumptive: {
     id: 'gatekeeper_assumptive',
     speaker: 'setter',
-    line: "No worries — could you put me through to {owner_first_name}? Should just take 60 seconds of their time.",
-    note: "Assumptive transfer. First-name-only + confident tone = gets through more often than explaining why. DO NOT pitch the gatekeeper — they'll kill the lead.",
+    line: "No worries — could you put me through to the owner? Takes 60 seconds, that's it.",
+    note: "Assumptive transfer. Confident tone + short time commitment = gets through more often than explaining why. We don't have the owner's first name yet — that's fine, \"the owner\" works. DO NOT pitch the gatekeeper — they'll kill the lead.",
     responses: [
       { label: "Sure, hold on / transferring", next: 'owner_transferred', tone: 'positive' },
       { label: "What's this regarding?", next: 'gatekeeper_regarding', tone: 'neutral' },
@@ -84,8 +84,8 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'gatekeeper_regarding',
     speaker: 'setter',
     line: {
-      no_website: "Totally fair. We built {business_name} a sample website — I just want {owner_first_name} to see it and decide whether they want it live. 60 seconds.",
-      has_website: "Totally fair. We built a redesign prototype for {business_name}'s current site — I just want to flag it for {owner_first_name} so they can take a look. 60 seconds.",
+      no_website: "Totally fair. We built {business_name} a sample website — I just want the owner to see it and decide whether they want it live. 60 seconds, that's it.",
+      has_website: "Totally fair. We built a redesign prototype for {business_name}'s current website — I just want to flag it for the owner so they can take a quick look. 60 seconds.",
     },
     note: "Mention the prototype — it's the strongest curiosity hook we have. The fact that we've already done work FOR them makes a transfer way more likely than a vague \"something we found\" pitch.",
     responses: [
@@ -98,10 +98,11 @@ export const SCRIPT: Record<string, CallNode> = {
   gatekeeper_callback: {
     id: 'gatekeeper_callback',
     speaker: 'setter',
-    line: "No problem. When's {owner_first_name} usually around — morning, afternoon, or end of day? And what's the best way to reach them directly?",
-    note: "Lock a specific window + ideally a direct line or cell. Vague = never happens. Get the gatekeeper's name too so you can ask for them by name next call.",
+    line: "No problem. Quick — what's the owner's name so I can ask for them directly next time? And when are they usually around — morning, afternoon, or end of day?",
+    note: "CAPTURE THE OWNER'S NAME HERE. We don't have it from the lead — every call is a chance to get it. Also lock a specific time window and ideally a direct line. Vague = never happens.",
     responses: [
-      { label: "Got a time window + name", next: 'out_callback', tone: 'positive' },
+      { label: "Got owner name + time window", next: 'out_callback', tone: 'positive' },
+      { label: "Got a time window, no name", next: 'out_callback', tone: 'neutral' },
       { label: "They won't say — just 'call back later'", next: 'out_callback', tone: 'neutral' },
       { label: "Don't call back / take us off list", next: 'out_not_interested', tone: 'negative' },
     ],
@@ -110,8 +111,8 @@ export const SCRIPT: Record<string, CallNode> = {
   owner_transferred: {
     id: 'owner_transferred',
     speaker: 'setter',
-    line: "Hey {owner_first_name}, thanks for hopping on. This is {setter_name} with Broadway Web Dev. Do you want the good news or the bad news first?",
-    note: "Fresh start now that the owner is on. Pattern interrupt immediately — no apology, no preamble, no \"weird question\" stutter. Straight into the question. Smile through the phone.",
+    line: "Hey, thanks for hopping on. This is [your name] with Broadway Web Dev. Do you want the good news or the bad news first?",
+    note: "Fresh start now that the owner is on. Don't use their name — we don't have it yet, and bluffing will blow the call. Pattern interrupt immediately. No apology, no preamble, no \"weird question\" stutter. Straight into the question. Smile through the phone.",
     responses: [
       { label: "Bad news first", next: 'bad_news', tone: 'positive' },
       { label: "Good news first", next: 'good_news', tone: 'positive' },
@@ -154,8 +155,8 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'bad_news',
     speaker: 'setter',
     line: {
-      no_website: "Bad news: {business_name} doesn't come up when people search for you online — you don't have a website at all. So every person in your area looking for what you do right now is clicking on your competitor instead. Every week that's real customers walking right past you, and you never even see it.",
-      has_website: "Bad news: I looked at {business_name}'s current site. Between how it shows up on Google, how it looks on a phone, and how easy it is for someone to actually book or contact you — you're leaking leads every single week to competitors whose sites just look more trustworthy at a glance.",
+      no_website: "Bad news: {business_name} doesn't come up when people search for you online — you don't have a website at all. Every person in your area looking for a {industry} right now is clicking on your competitor instead. Every week that's real customers walking right past you, and you never even see it.",
+      has_website: "Bad news: I looked at {business_name}'s current site. Between how it shows up on Google, how it looks on a phone, and how easy it is for someone to actually book or contact you — you're leaking leads every single week to other {industry} businesses whose sites just look more trustworthy at a glance.",
     },
     note: {
       no_website: "Make it concrete — 'people searching for you, finding your competitor.' Let it land, pause 2 seconds. Don't oversell. They may not know they're invisible online.",
@@ -192,7 +193,7 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'pitch_details',
     speaker: 'setter',
     line: {
-      no_website: "Short version: our designer pulls up the sample site we built for {business_name} live on the call, walks you through every section, and tells you exactly what it'd cost to take it live. 15 minutes. Zero obligation. You either love it or you don't. Want me to grab a slot?",
+      no_website: "Short version: our designer pulls up the sample site we built for {business_name} live on the call, shows you a couple of other {industry} sites we've launched, walks you through every section, and tells you exactly what it'd cost to take yours live. 15 minutes. Zero obligation. You either love it or you don't. Want me to grab a slot?",
       has_website: "Short version: our designer pulls up the redesign we built for {business_name} live on the call, walks through it side-by-side with your current site, and tells you exactly what it'd cost to swap it in. 15 minutes. Zero obligation. You either love it or you don't. Want me to grab a slot?",
     },
     note: "Emphasize: prototype already exists + 15 min + zero obligation + \"love it or you don't\" gives them a psychological out. Assume the close.",
@@ -316,8 +317,8 @@ export const SCRIPT: Record<string, CallNode> = {
   book_time: {
     id: 'book_time',
     speaker: 'setter',
-    line: "Love it. Our designer has tomorrow at 10 AM or 2 PM open — which one works better for {owner_first_name}? If neither, I'll find one that does.",
-    note: "ALWAYS offer two specific times. Never ask 'when are you free' — it kills bookings. Use owner's first name to keep it personal.",
+    line: "Love it. Our designer has tomorrow at 10 AM or 2 PM open — which one works better? If neither, I'll find one that does.",
+    note: "ALWAYS offer two specific times. Never ask 'when are you free' — it kills bookings. We don't have the owner's first name yet (we'll capture it on the next step), so address them directly as \"you.\"",
     responses: [
       { label: "Morning works (10 AM)", next: 'book_confirm_email', tone: 'positive' },
       { label: "Afternoon works (2 PM)", next: 'book_confirm_email', tone: 'positive' },
@@ -329,10 +330,11 @@ export const SCRIPT: Record<string, CallNode> = {
   book_confirm_email: {
     id: 'book_confirm_email',
     speaker: 'setter',
-    line: "Locked in. What's the best email for the calendar invite? I'll also shoot you a text 15 minutes before so you don't miss it.",
-    note: "Read the email back letter-by-letter. Confirm the phone number too. This is where bookings get lost to typos.",
+    line: "Locked in. Two things — what's your name so I can put it on the invite, and what's the best email to send it to? I'll also text you a reminder 15 minutes before.",
+    note: "CAPTURE THE NAME HERE — we don't have it from the lead. Put the name on the calendar invite so the designer uses it on the call. Also read the email back letter-by-letter — this is where bookings get lost to typos.",
     responses: [
-      { label: "Got email + time confirmed", next: 'out_booked', tone: 'positive' },
+      { label: "Got name + email + time confirmed", next: 'out_booked', tone: 'positive' },
+      { label: "Got email but not name (or vice versa)", next: 'out_booked', tone: 'neutral' },
       { label: "Changed mind last second", next: 'obj_not_interested', tone: 'negative' },
     ],
   },
@@ -340,10 +342,11 @@ export const SCRIPT: Record<string, CallNode> = {
   book_callback: {
     id: 'book_callback',
     speaker: 'setter',
-    line: "No problem — what specific day and 2-hour window works best? I'll call you right at the start of that window.",
-    note: "Pin down a 2-hour window, not 'sometime next week.' Vague = never happens. Note any context ('seemed interested, just busy this week').",
+    line: "No problem — what specific day and 2-hour window works best? I'll call you right at the start of that window. And what's your name so I can ask for you directly next time?",
+    note: "Pin down a 2-hour window, not 'sometime next week.' Vague = never happens. CAPTURE THEIR NAME here — we don't have it from the lead, and asking for them by name on the callback boosts pickup rate.",
     responses: [
-      { label: "Got a specific day + window", next: 'out_callback', tone: 'positive' },
+      { label: "Got name + day + window", next: 'out_callback', tone: 'positive' },
+      { label: "Got day + window, no name", next: 'out_callback', tone: 'neutral' },
       { label: "They got vague / 'just try me sometime'", next: 'out_callback', tone: 'neutral' },
     ],
   },
