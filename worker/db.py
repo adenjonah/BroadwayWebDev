@@ -125,6 +125,7 @@ class SupabaseDB:
             status="completed",
             qualified_count=qualified_count,
             found_places=found_places,
+            total_found=len(found_places),
             completed_at=_now(),
         )
 

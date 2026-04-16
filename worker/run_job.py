@@ -192,10 +192,11 @@ def execute_job(job_id: str) -> None:
             inserted = db.insert_lead(
                 candidate, job_id, discovered_website=discovered
             )
+            tag = f" (has website via DDG: {discovered})" if discovered else ""
             if inserted:
-                qualified_count += 1
-                tag = f" (discovered: {discovered})" if discovered else ""
                 print(f"  Lead: {candidate.name}{tag}")
+            if inserted and not discovered:
+                qualified_count += 1
 
             db.update_verify_progress(
                 job_id,
