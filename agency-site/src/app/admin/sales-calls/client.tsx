@@ -4,8 +4,12 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   SCRIPT,
   START_NODE_ID,
+  PATH_LABEL,
+  PATH_SHORT,
+  resolveLine,
   type CallNode,
   type CallResponse,
+  type CallPath,
   type ResponseTone,
   type TerminalOutcome,
 } from '@/lib/sales-calls/script';
@@ -37,10 +41,17 @@ const OUTCOME_LABEL: Record<TerminalOutcome, string> = {
 };
 
 export default function SalesCallsClient() {
+  const [path, setPath] = useState<CallPath | null>(null);
   const [currentNodeId, setCurrentNodeId] = useState<string>(START_NODE_ID);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   const node: CallNode | undefined = SCRIPT[currentNodeId];
+
+  const handleSelectPath = useCallback((selected: CallPath) => {
+    setPath(selected);
+    setCurrentNodeId(START_NODE_ID);
+    setHistory([]);
+  }, []);
 
   const handleResponse = useCallback((response: CallResponse) => {
     setHistory((prev) => [...prev, { nodeId: currentNodeId, responseLabel: response.label }]);
@@ -63,11 +74,16 @@ export default function SalesCallsClient() {
   }, []);
 
   const handleReset = useCallback(() => {
+    setPath(null);
     setHistory([]);
     setCurrentNodeId(START_NODE_ID);
   }, []);
 
   const breadcrumbs = useMemo(() => history.slice(-4), [history]);
+
+  if (path === null) {
+    return <PathSelector onSelect={handleSelectPath} />;
+  }
 
   if (!node) {
     return (
@@ -79,7 +95,10 @@ export default function SalesCallsClient() {
         </div>
         <div className="admin-content">
           <div className="container">
-            <p>Script node not found. <button className="btn btn-outline" onClick={handleReset}>Start over</button></p>
+            <p>
+              Script node not found.{' '}
+              <button className="btn btn-outline" onClick={handleReset}>Start over</button>
+            </p>
           </div>
         </div>
       </>
@@ -97,13 +116,16 @@ export default function SalesCallsClient() {
               <h1>Sales Call Script</h1>
               <p>Read the line. Click what they said. Next line shows up.</p>
             </div>
-            <button
-              type="button"
-              className="btn btn-outline sales-calls-reset"
-              onClick={handleReset}
-            >
-              Start new call
-            </button>
+            <div className="sales-calls-header-actions">
+              <span className="sales-calls-path-chip">{PATH_SHORT[path]}</span>
+              <button
+                type="button"
+                className="btn btn-outline sales-calls-reset"
+                onClick={handleReset}
+              >
+                Start new call
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -111,9 +133,9 @@ export default function SalesCallsClient() {
       <div className="admin-content">
         <div className="container sales-calls-root">
           {isOutcome ? (
-            <OutcomeCard node={node} onReset={handleReset} />
+            <OutcomeCard node={node} path={path} onReset={handleReset} />
           ) : (
-            <SetterCard node={node} onRespond={handleResponse} />
+            <SetterCard node={node} path={path} onRespond={handleResponse} />
           )}
 
           <div className="sales-calls-footer">
@@ -145,19 +167,71 @@ export default function SalesCallsClient() {
   );
 }
 
+function PathSelector({ onSelect }: { onSelect: (path: CallPath) => void }) {
+  return (
+    <>
+      <div className="admin-header">
+        <div className="container">
+          <h1>Sales Call Script</h1>
+          <p>Pick the right script path for this lead before you dial.</p>
+        </div>
+      </div>
+      <div className="admin-content">
+        <div className="container sales-calls-root">
+          <div className="sales-calls-path-selector">
+            <div className="sales-calls-path-prompt">
+              Does this business currently have a website?
+            </div>
+            <div className="sales-calls-path-options">
+              <button
+                type="button"
+                className="sales-calls-path-option sales-calls-path-option--no"
+                onClick={() => onSelect('no_website')}
+              >
+                <span className="sales-calls-path-option-title">No website</span>
+                <span className="sales-calls-path-option-sub">
+                  {PATH_LABEL.no_website} — pitch a brand new site.
+                </span>
+              </button>
+              <button
+                type="button"
+                className="sales-calls-path-option sales-calls-path-option--yes"
+                onClick={() => onSelect('has_website')}
+              >
+                <span className="sales-calls-path-option-title">Has a website</span>
+                <span className="sales-calls-path-option-sub">
+                  {PATH_LABEL.has_website} — pitch a rebuild / refresh.
+                </span>
+              </button>
+            </div>
+            <div className="sales-calls-path-hint">
+              You can switch paths by clicking &quot;Start new call&quot; at any time.
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function SetterCard({
   node,
+  path,
   onRespond,
 }: {
   node: CallNode;
+  path: CallPath;
   onRespond: (response: CallResponse) => void;
 }) {
+  const line = resolveLine(node.line, path);
+  const noteText = node.note ? resolveLine(node.note, path) : null;
+
   return (
     <>
       <div className="sales-calls-card">
         <div className="sales-calls-speaker sales-calls-speaker--setter">You say</div>
-        <div className="sales-calls-line">{node.line}</div>
-        {node.note ? <div className="sales-calls-note">{node.note}</div> : null}
+        <div className="sales-calls-line">{line}</div>
+        {noteText ? <div className="sales-calls-note">{noteText}</div> : null}
       </div>
 
       <div className="sales-calls-responses-label">They said…</div>
@@ -183,21 +257,24 @@ function SetterCard({
 
 function OutcomeCard({
   node,
+  path,
   onReset,
 }: {
   node: CallNode;
+  path: CallPath;
   onReset: () => void;
 }) {
   const outcome = node.terminal;
   if (!outcome) return null;
   const outcomeClass = OUTCOME_CLASS[outcome];
   const outcomeLabel = OUTCOME_LABEL[outcome];
+  const noteText = node.note ? resolveLine(node.note, path) : null;
 
   return (
     <div className={`sales-calls-outcome ${outcomeClass}`}>
       <div className="sales-calls-outcome-tag">Outcome</div>
       <div className="sales-calls-outcome-title">{outcomeLabel}</div>
-      {node.note ? <div className="sales-calls-outcome-note">{node.note}</div> : null}
+      {noteText ? <div className="sales-calls-outcome-note">{noteText}</div> : null}
       <button type="button" className="btn btn-primary sales-calls-outcome-cta" onClick={onReset}>
         Start new call
       </button>

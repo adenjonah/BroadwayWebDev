@@ -1,5 +1,22 @@
 export type ResponseTone = 'positive' | 'neutral' | 'objection' | 'negative';
 export type TerminalOutcome = 'booked' | 'callback' | 'not_interested' | 'wrong_number';
+export type CallPath = 'no_website' | 'has_website';
+
+export const PATH_LABEL: Record<CallPath, string> = {
+  no_website: "They don't have a website",
+  has_website: 'They have a website (needs a refresh)',
+};
+
+export const PATH_SHORT: Record<CallPath, string> = {
+  no_website: 'No site',
+  has_website: 'Has site',
+};
+
+export type PathLine = string | Record<CallPath, string>;
+
+export function resolveLine(line: PathLine, path: CallPath): string {
+  return typeof line === 'string' ? line : line[path];
+}
 
 export interface CallResponse {
   label: string;
@@ -10,8 +27,8 @@ export interface CallResponse {
 export interface CallNode {
   id: string;
   speaker: 'setter' | 'outcome';
-  line: string;
-  note?: string;
+  line: PathLine;
+  note?: PathLine;
   responses: CallResponse[];
   terminal?: TerminalOutcome;
 }
@@ -24,7 +41,7 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'opening',
     speaker: 'setter',
     line: "Hi — real quick, is this the owner of {business_name}?",
-    note: "Open with owner qualification, NOT your name. Confident, casual, no apology. If anyone but the owner picks up, go to gatekeeper branch — we ONLY pitch owners.",
+    note: "Open with owner qualification, NOT your name. Confident, casual, no apology. If anyone but the owner picks up, go to the gatekeeper branch — we ONLY pitch owners.",
     responses: [
       { label: "Yes, this is the owner", next: 'pattern_interrupt', tone: 'positive' },
       { label: "Yes, speaking (no clarification)", next: 'pattern_interrupt', tone: 'positive' },
@@ -44,7 +61,7 @@ export const SCRIPT: Record<string, CallNode> = {
       { label: "Yes I'm the owner", next: 'pattern_interrupt', tone: 'positive' },
       { label: "No I'm not the owner", next: 'gatekeeper_assumptive', tone: 'neutral' },
       { label: "Still want more detail before I say", next: 'gatekeeper_regarding', tone: 'neutral' },
-      { label: "Not interested / hangs up energy", next: 'obj_not_interested', tone: 'objection' },
+      { label: "Not interested / hostile", next: 'obj_not_interested', tone: 'objection' },
     ],
   },
 
@@ -66,8 +83,11 @@ export const SCRIPT: Record<string, CallNode> = {
   gatekeeper_regarding: {
     id: 'gatekeeper_regarding',
     speaker: 'setter',
-    line: "Totally fair. I'm reaching out because we found something on {business_name}'s online setup that's probably costing them leads right now. I just need 60 seconds with {owner_first_name} to flag it — then they can decide what to do with it.",
-    note: "Stay vague and intriguing — 'something costing them leads.' Don't give the full pitch to the gatekeeper. If pushed harder, pivot to a callback.",
+    line: {
+      no_website: "Totally fair. I'm reaching out because {business_name} doesn't come up when people search for you online — I just want to flag that for {owner_first_name} and let them decide what to do with it. 60 seconds, that's it.",
+      has_website: "Totally fair. I'm reaching out because I found something on {business_name}'s current website that's probably costing them leads right now. 60 seconds with {owner_first_name} and they can decide what to do with it.",
+    },
+    note: "Stay specific-but-vague — give just enough curiosity to get the transfer. Don't give the full pitch to the gatekeeper. If pushed harder, pivot to a callback.",
     responses: [
       { label: "Let me check if they can talk", next: 'owner_transferred', tone: 'positive' },
       { label: "Leave a message / I'll pass it on", next: 'gatekeeper_callback', tone: 'neutral' },
@@ -79,7 +99,7 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'gatekeeper_callback',
     speaker: 'setter',
     line: "No problem. When's {owner_first_name} usually around — morning, afternoon, or end of day? And what's the best way to reach them directly?",
-    note: "Lock a specific window + ideally a direct line or cell. Vague = never happens. Get their name too so you can ask for them by name next call.",
+    note: "Lock a specific window + ideally a direct line or cell. Vague = never happens. Get the gatekeeper's name too so you can ask for them by name next call.",
     responses: [
       { label: "Got a time window + name", next: 'out_callback', tone: 'positive' },
       { label: "They won't say — just 'call back later'", next: 'out_callback', tone: 'neutral' },
@@ -90,7 +110,7 @@ export const SCRIPT: Record<string, CallNode> = {
   owner_transferred: {
     id: 'owner_transferred',
     speaker: 'setter',
-    line: "Hey {owner_first_name}, thanks for hopping on. This is {setter_name} with Broadway Web Dev. Quick one — do you want the good news or the bad news first?",
+    line: "Hey {owner_first_name}, thanks for hopping on. This is {setter_name} with Broadway Web Dev. OK, weird question — do you want the good news or the bad news first?",
     note: "Fresh start now that the owner is on. Pattern interrupt immediately — no apology for taking their time. Smile through the phone.",
     responses: [
       { label: "Bad news first", next: 'bad_news', tone: 'positive' },
@@ -125,20 +145,26 @@ export const SCRIPT: Record<string, CallNode> = {
     responses: [
       { label: "Bad news first", next: 'bad_news', tone: 'positive' },
       { label: "Good news first", next: 'good_news', tone: 'positive' },
-      { label: "Not interested — hangs up", next: 'out_not_interested', tone: 'negative' },
+      { label: "Not interested — hangs up energy", next: 'out_not_interested', tone: 'negative' },
     ],
   },
 
-  // ─── BAD NEWS / GOOD NEWS ──────────────────────────────
+  // ─── BAD NEWS / GOOD NEWS (path-conditional) ───────────
   bad_news: {
     id: 'bad_news',
     speaker: 'setter',
-    line: "Bad news: I looked at {business_name}'s online setup. Either no website, an outdated one, or your phone's going to voicemail after hours. In your industry that's real money walking to your competitor every week — easily a few thousand a month in leads you're never even seeing.",
-    note: "Be specific: pull the actual detail from the lead card (no site / outdated / bad mobile / no reviews). Vague pain = no pain. Let it land — 2-second silence after.",
+    line: {
+      no_website: "Bad news: {business_name} doesn't come up when people search for you online — you don't have a website at all. So every person in your area looking for what you do right now is clicking on your competitor instead. Every week that's real customers walking right past you, and you never even see it.",
+      has_website: "Bad news: I looked at {business_name}'s current site. Between how it shows up on Google, how it looks on a phone, and how easy it is for someone to actually book or contact you — you're leaking leads every single week to competitors whose sites just look more trustworthy at a glance.",
+    },
+    note: {
+      no_website: "Make it concrete — 'people searching for you, finding your competitor.' Let it land, pause 2 seconds. Don't oversell. They may not know they're invisible online.",
+      has_website: "Be specific if you can (outdated design, slow load, doesn't work on phones, can't find contact info). Pull it from the lead card. Vague pain = no pain. Let it land — 2-second silence after.",
+    },
     responses: [
       { label: "OK… and the good news?", next: 'good_news', tone: 'positive' },
       { label: "We do fine, we have enough business", next: 'obj_enough_business', tone: 'objection' },
-      { label: "We already have a website", next: 'obj_have_site', tone: 'objection' },
+      { label: "We already have a website (unexpected)", next: 'obj_have_site', tone: 'objection' },
       { label: "How much to fix it?", next: 'obj_price', tone: 'objection' },
       { label: "Not interested", next: 'obj_not_interested', tone: 'objection' },
     ],
@@ -147,15 +173,17 @@ export const SCRIPT: Record<string, CallNode> = {
   good_news: {
     id: 'good_news',
     speaker: 'setter',
-    line: "Good news: we fix both sides of that. We build clean, affordable websites for local businesses AND we set up an AI receptionist that answers every call 24/7, qualifies the lead, and books the appointment for you — even at 11 PM on a Sunday. Owners we work with usually pay for the whole thing with the first month of after-hours bookings they used to miss. Worth 15 minutes with our designer to see what it'd look like for {business_name}?",
-    note: "This is the full pitch. The AI receptionist angle is the hook — lead with 'never miss a call.' Ask for the 15-min meeting immediately after.",
+    line: {
+      no_website: "Good news: we build clean, affordable websites for local businesses exactly like yours. Fast turnaround, shows up on Google, looks great on phones — and you'd start capturing the customers who are currently searching and finding nothing. Our designer does a free 15-minute call, looks at what {business_name} needs, and gives you a straight quote. Want me to grab you a time?",
+      has_website: "Good news: we rebuild sites like yours all the time. We keep whatever's working, fix what's not — modern look, shows up on Google properly, built so visitors actually turn into customers. Free 15-minute call with our designer, pulls up your current site live, gives you a straight quote on what a refresh would run. Want me to grab you a slot?",
+    },
+    note: "This is the pitch. Ask for the 15-min meeting immediately after. Keep the tone casual, not salesy.",
     responses: [
       { label: "Yeah let's book it", next: 'book_time', tone: 'positive' },
       { label: "Tell me more first", next: 'pitch_details', tone: 'positive' },
-      { label: "How much does all that cost?", next: 'obj_price', tone: 'objection' },
+      { label: "How much does it cost?", next: 'obj_price', tone: 'objection' },
       { label: "Send me info / email first", next: 'obj_send_info', tone: 'objection' },
-      { label: "We already have a website", next: 'obj_have_site', tone: 'objection' },
-      { label: "We don't need AI stuff", next: 'obj_no_ai', tone: 'objection' },
+      { label: "We already have a website (unexpected)", next: 'obj_have_site', tone: 'objection' },
       { label: "Not interested", next: 'obj_not_interested', tone: 'objection' },
     ],
   },
@@ -163,7 +191,10 @@ export const SCRIPT: Record<string, CallNode> = {
   pitch_details: {
     id: 'pitch_details',
     speaker: 'setter',
-    line: "Totally — here's the short version. Our designer gets on a 15-minute call, looks at your current setup, and gives you a straight-up quote for either just the website, just the AI receptionist, or both. Zero obligation. Most owners get real numbers out of it even if they don't buy. Want me to grab you a slot?",
+    line: {
+      no_website: "Short version: 15 minutes with our designer. He'll look at what kind of site {business_name} needs, show you a couple of examples we've built for similar local businesses, and give you a straight number to get one launched. Starts at a few hundred bucks, fast turnaround. Zero obligation. Want me to grab a slot?",
+      has_website: "Short version: 15 minutes with our designer. He'll pull up your current site live on the call, walk through exactly what's costing you leads right now, and give you a straight quote to fix it. Most owners find out about stuff they didn't know was broken. Zero obligation. Want me to grab a slot?",
+    },
     note: "Emphasize 15 min + straight quote + zero obligation. Assume the close.",
     responses: [
       { label: "OK let's do it", next: 'book_time', tone: 'positive' },
@@ -177,7 +208,7 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_enough_business: {
     id: 'obj_enough_business',
     speaker: 'setter',
-    line: "That's actually awesome to hear. Quick one though — if more leads DID come in next month, would you turn them away, or would you want them? Because the AI receptionist part is basically free money when it works — it's picking up calls you're literally not answering right now.",
+    line: "That's actually awesome to hear. Quick one though — if more qualified customers DID start showing up next month, would you turn them away, or would you want them? Because a website is basically passive — it's picking up searches you're literally missing right now, whether you want the leads or not.",
     note: "NEPQ reframe — make them reveal whether they'd actually turn down more revenue. Almost nobody says 'yes, turn it away.' If they do, respect it and exit.",
     responses: [
       { label: "Sure, I'd take more leads", next: 'good_news', tone: 'positive' },
@@ -189,59 +220,27 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_have_site: {
     id: 'obj_have_site',
     speaker: 'setter',
-    line: "Nice — out of curiosity, when's the last time it actually got you a brand new customer? Or are most of your leads still coming from word of mouth and repeats?",
-    note: "Classic NEPQ. Don't argue with their site — make them say it's not pulling weight. If they brag, pivot clean to AI receptionist angle (different problem).",
+    line: {
+      no_website: "Oh — you've got a site up already? My bad, I couldn't find one when I looked. What's the URL? Because if it exists but I couldn't find it easily, that's actually part of the problem we'd want to fix.",
+      has_website: "Nice — out of curiosity, when's the last time it actually got you a brand new customer? Or are most of your leads still coming from word of mouth and repeats?",
+    },
+    note: {
+      no_website: "Discovery branch — your lead data said no site but they claim they have one. Get the URL, verify, and pivot. If the URL is genuinely hard to find, that IS the pitch.",
+      has_website: "Classic NEPQ. Don't argue with their site — make them say it's not pulling weight. If they brag about it, respect it and exit or pivot to the lead-volume angle.",
+    },
     responses: [
-      { label: "Honestly, hard to say / not many", next: 'pitch_ai_angle', tone: 'positive' },
-      { label: "Mostly word of mouth, yeah", next: 'pitch_ai_angle', tone: 'positive' },
-      { label: "We get plenty from the site", next: 'pitch_ai_only', tone: 'neutral' },
-      { label: "We love our current site — no changes", next: 'pitch_ai_only', tone: 'objection' },
+      { label: "They gave URL — site is actually outdated / hard to find", next: 'pitch_details', tone: 'positive' },
+      { label: "Honestly, hard to say / not many leads", next: 'pitch_details', tone: 'positive' },
+      { label: "Mostly word of mouth, yeah", next: 'pitch_details', tone: 'positive' },
+      { label: "We get plenty from the site / love it", next: 'obj_not_interested', tone: 'objection' },
       { label: "Not interested in any of this", next: 'obj_not_interested', tone: 'objection' },
-    ],
-  },
-
-  pitch_ai_angle: {
-    id: 'pitch_ai_angle',
-    speaker: 'setter',
-    line: "That's what we hear a lot. So the play is: we rebuild the site so Google actually shows you when people search locally, AND the AI receptionist catches every call that would've gone to voicemail. Two leaks, one fix. 15 minutes with our designer, straight quote. Want me to hold a time?",
-    note: "Tie both offers together. 'Two leaks, one fix' is memorable. Keep pushing toward the 15-min ask.",
-    responses: [
-      { label: "OK book it", next: 'book_time', tone: 'positive' },
-      { label: "How much?", next: 'obj_price', tone: 'objection' },
-      { label: "Send info first", next: 'obj_send_info', tone: 'objection' },
-      { label: "Not interested", next: 'obj_not_interested', tone: 'objection' },
-    ],
-  },
-
-  pitch_ai_only: {
-    id: 'pitch_ai_only',
-    speaker: 'setter',
-    line: "Fair enough — forget the website then. One question: how many calls a week do you think you're missing? Because even if your site is crushing it, every call after hours that goes to voicemail is usually gone to your competitor. Our AI receptionist answers 24/7, books appointments, and costs way less than a part-time person. Worth a 15-min look?",
-    note: "Pivot completely to AI. Don't re-pitch the website — they said no. AI receptionist is the standalone hook: missed calls = lost revenue, plus the cost comparison lands (AI ~$300/mo vs human receptionist $4K/mo).",
-    responses: [
-      { label: "OK that's interesting — book it", next: 'book_time', tone: 'positive' },
-      { label: "How much is just the AI?", next: 'obj_price', tone: 'objection' },
-      { label: "We don't miss calls", next: 'obj_not_interested', tone: 'objection' },
-      { label: "Not interested", next: 'obj_not_interested', tone: 'objection' },
-    ],
-  },
-
-  obj_no_ai: {
-    id: 'obj_no_ai',
-    speaker: 'setter',
-    line: "Totally get it — AI is buzzword-heavy right now. This isn't chatbot stuff. It's literally: a phone number rings 24/7, answers in a normal voice, asks the basic qualifying questions you'd ask, and drops the booked appointment in your calendar. We can even skip that part and just do the website. 15-min call either way?",
-    note: "Demystify. Don't say 'AI' too much — describe what it DOES. Offer the website-only path as a fallback.",
-    responses: [
-      { label: "OK if it's just a better phone line, book it", next: 'book_time', tone: 'positive' },
-      { label: "Just do the website then", next: 'pitch_details', tone: 'positive' },
-      { label: "Still not interested", next: 'obj_not_interested', tone: 'objection' },
     ],
   },
 
   obj_price: {
     id: 'obj_price',
     speaker: 'setter',
-    line: "Totally fair — most owners ask that first. Honestly, most of the owners we work with felt the same way before they saw the numbers. Websites start at a few hundred bucks, and the AI receptionist is usually less than what a part-time person would run you for a week. But the 15-min call is literally there to get you a real quote — not a ballpark. Worth it to get the actual number?",
+    line: "Totally fair — most owners ask that first. Honestly, a lot of the owners we work with felt the same way before they saw the numbers. Our sites usually start at a few hundred bucks and most owners pay it back in the first month or two once leads start coming in. But the 15-min call is literally there to get you a real quote based on what you need — not a ballpark. Worth it to get the actual number?",
     note: "3 F's: Feel, Felt, Found. NEVER quote a firm price — that's the closer's job. Deflect to the free call every time.",
     responses: [
       { label: "OK yeah, book the call", next: 'book_time', tone: 'positive' },
@@ -254,7 +253,7 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_price_ballpark: {
     id: 'obj_price_ballpark',
     speaker: 'setter',
-    line: "I hear you. Range is usually a few hundred to low thousands upfront for the site, and the AI piece runs a few hundred a month. But every owner's setup is different — my designer doesn't like me quoting numbers because he's the one who actually has to build it. 15 minutes, zero obligation, real number. Cool?",
+    line: "I hear you. Range is usually a few hundred to low thousands one-time, depending on how many pages and features you need. But every business's setup is different — my designer doesn't like me quoting firm numbers because he's the one who actually has to build it. 15 minutes, zero obligation, real number. Cool?",
     note: "Last-resort ballpark only — frame it wide and re-deflect to the 15-min call. Blame the designer for not quoting firm.",
     responses: [
       { label: "OK that's reasonable, book it", next: 'book_time', tone: 'positive' },
@@ -277,12 +276,12 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_send_info: {
     id: 'obj_send_info',
     speaker: 'setter',
-    line: "Happy to — one quick question so I send something actually useful: are you more curious about the website side, the AI receptionist, or both?",
-    note: "NEVER just send info — it's the email black hole. Qualify what they care about, THEN convert to a call.",
+    line: "Happy to — one quick question so I send something actually useful: what's the main thing you'd want a website to do for {business_name}? More leads, look more professional, show up on Google, something else?",
+    note: "NEVER just send info — it's the email black hole. Qualify what they care about, THEN convert to a call. Also gives the designer context for the follow-up.",
     responses: [
-      { label: "Mostly the website", next: 'obj_send_info_convert', tone: 'neutral' },
-      { label: "Mostly the AI receptionist", next: 'obj_send_info_convert', tone: 'neutral' },
-      { label: "Both", next: 'obj_send_info_convert', tone: 'positive' },
+      { label: "More leads / customers", next: 'obj_send_info_convert', tone: 'positive' },
+      { label: "Show up on Google / get found", next: 'obj_send_info_convert', tone: 'positive' },
+      { label: "Look more professional / legitimate", next: 'obj_send_info_convert', tone: 'positive' },
       { label: "Just send the standard stuff", next: 'obj_send_info_convert', tone: 'neutral' },
     ],
   },
@@ -302,10 +301,10 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_not_interested: {
     id: 'obj_not_interested',
     speaker: 'setter',
-    line: "Totally respect that. Before I let you go — honest question, no pitch: if you could flip a switch right now and have 3–5 more qualified leads show up at {business_name} next month, would you want that, or is your plate genuinely full?",
+    line: "Totally respect that. Before I let you go — honest question, no pitch: if you could flip a switch right now and have 3–5 more qualified customers show up at {business_name} next month, would you want that, or is your plate genuinely full?",
     note: "Soft takeaway + NEPQ discovery in one. Gives them one honest out without feeling sold-to. Almost nobody says 'plate is full.' If they do, respect it.",
     responses: [
-      { label: "Sure, I'd take more leads", next: 'pitch_ai_angle', tone: 'positive' },
+      { label: "Sure, I'd take more leads", next: 'good_news', tone: 'positive' },
       { label: "Maybe in a few months", next: 'book_callback', tone: 'neutral' },
       { label: "Plate is genuinely full", next: 'out_not_interested', tone: 'negative' },
       { label: "Just take me off your list", next: 'out_not_interested', tone: 'negative' },
@@ -353,7 +352,7 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'out_booked',
     speaker: 'outcome',
     line: "Appointment booked",
-    note: "Log in CRM immediately: business, owner name, phone, email, appointment time, whether they're leaning website / AI / both. Send the calendar invite RIGHT NOW while it's fresh — every minute delay = drop in show rate.",
+    note: "Log in CRM immediately: business, owner name, phone, email, appointment time, AND flag whether they currently have a site (so the designer knows whether to prep a mockup or a redesign proposal). Send the calendar invite RIGHT NOW — every minute of delay drops the show rate.",
     terminal: 'booked',
     responses: [
       { label: "Start new call", next: START_NODE_ID, tone: 'neutral' },
@@ -375,7 +374,7 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'out_not_interested',
     speaker: 'outcome',
     line: "Not interested",
-    note: "Mark lead dead. Note the REASON — 'already has someone,' 'bad timing,' 'hostile,' 'maxed out.' Reason tells us whether to retarget in 6 months or never call again.",
+    note: "Mark the lead dead. Note the REASON — 'already has someone,' 'bad timing,' 'hostile,' 'maxed out.' The reason tells us whether to retarget in 6 months or never call again.",
     terminal: 'not_interested',
     responses: [
       { label: "Start new call", next: START_NODE_ID, tone: 'neutral' },
