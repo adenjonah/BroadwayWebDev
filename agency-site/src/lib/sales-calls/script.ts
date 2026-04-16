@@ -40,8 +40,8 @@ export const SCRIPT: Record<string, CallNode> = {
   opening: {
     id: 'opening',
     speaker: 'setter',
-    line: "Hi — real quick, is this the owner of {business_name}?",
-    note: "Open with owner qualification, NOT your name. Confident, casual, no apology. If anyone but the owner picks up, go to the gatekeeper branch — we ONLY pitch owners.",
+    line: "Hi, is this the owner of {business_name}?",
+    note: "Open with owner qualification, NOT your name. Confident, casual, no apology. Straight question — no \"real quick\" or \"sorry to bother you\" preamble. If anyone but the owner picks up, go to the gatekeeper branch — we ONLY pitch owners.",
     responses: [
       { label: "Yes, this is the owner", next: 'pattern_interrupt', tone: 'positive' },
       { label: "Yes, speaking (no clarification)", next: 'pattern_interrupt', tone: 'positive' },
@@ -55,8 +55,8 @@ export const SCRIPT: Record<string, CallNode> = {
   reframe_identity: {
     id: 'reframe_identity',
     speaker: 'setter',
-    line: "Fair question — this is {setter_name} with Broadway Web Dev. I'll keep it to 30 seconds. Just need to confirm first — are you the owner of {business_name}?",
-    note: "Don't pitch yet. Re-anchor on owner qualification. Confident tone earns the next question.",
+    line: "Fair question — this is {setter_name} with Broadway Web Dev. Are you the owner of {business_name}?",
+    note: "Don't pitch yet. Re-anchor on owner qualification. Confident tone earns the next question. No fillers like \"just need to confirm\" — they weaken the ask.",
     responses: [
       { label: "Yes I'm the owner", next: 'pattern_interrupt', tone: 'positive' },
       { label: "No I'm not the owner", next: 'gatekeeper_assumptive', tone: 'neutral' },
@@ -110,8 +110,8 @@ export const SCRIPT: Record<string, CallNode> = {
   owner_transferred: {
     id: 'owner_transferred',
     speaker: 'setter',
-    line: "Hey {owner_first_name}, thanks for hopping on. This is {setter_name} with Broadway Web Dev. OK, weird question — do you want the good news or the bad news first?",
-    note: "Fresh start now that the owner is on. Pattern interrupt immediately — no apology for taking their time. Smile through the phone.",
+    line: "Hey {owner_first_name}, thanks for hopping on. This is {setter_name} with Broadway Web Dev. Do you want the good news or the bad news first?",
+    note: "Fresh start now that the owner is on. Pattern interrupt immediately — no apology, no preamble, no \"weird question\" stutter. Straight into the question. Smile through the phone.",
     responses: [
       { label: "Bad news first", next: 'bad_news', tone: 'positive' },
       { label: "Good news first", next: 'good_news', tone: 'positive' },
@@ -125,8 +125,8 @@ export const SCRIPT: Record<string, CallNode> = {
   pattern_interrupt: {
     id: 'pattern_interrupt',
     speaker: 'setter',
-    line: "Awesome. OK, weird question — do you want the good news or the bad news first?",
-    note: "THE pattern interrupt. \"Weird question\" primes them for something unusual without tipping it's a sales line. Say it playfully, not salesy. Pause after — make them pick. If they can't pick, default to bad news (curiosity gap). DON'T apologize or disclaim — it weakens the interrupt.",
+    line: "Awesome. Do you want the good news or the bad news first?",
+    note: "THE pattern interrupt. Say it confident and straight — NO preamble like \"weird question,\" \"real quick,\" or \"I promise this isn't a pitch.\" Those are stutters and weaken the interrupt. Pause after — make them pick. If they can't pick, default to bad news (curiosity gap).",
     responses: [
       { label: "Bad news first", next: 'bad_news', tone: 'positive' },
       { label: "Good news first", next: 'good_news', tone: 'positive' },
@@ -140,8 +140,8 @@ export const SCRIPT: Record<string, CallNode> = {
   reframe_playful: {
     id: 'reframe_playful',
     speaker: 'setter',
-    line: "Honestly? Kind of. But I found something about {business_name} online that you'd actually want to know — 30 seconds and you can hang up if it's not useful. Good news or bad news first?",
-    note: "Transparent beats evasive. Admit it's a sales call, then pivot fast to the specific value. Giving them permission to hang up (\"you can hang up\") paradoxically lowers their defenses.",
+    line: "Yes — but I found something about {business_name} online you'd actually want to know. 30 seconds and you can hang up if it's not useful. Good news or bad news first?",
+    note: "Own it — it IS a sales call. Don't hedge with \"kind of\" or \"not the pushy kind.\" Straight \"Yes,\" then pivot fast to the specific value. Giving them permission to hang up (\"you can hang up\") paradoxically lowers their defenses.",
     responses: [
       { label: "Bad news first", next: 'bad_news', tone: 'positive' },
       { label: "Good news first", next: 'good_news', tone: 'positive' },
@@ -208,7 +208,7 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_enough_business: {
     id: 'obj_enough_business',
     speaker: 'setter',
-    line: "That's actually awesome to hear. Quick one though — if more qualified customers DID start showing up next month, would you turn them away, or would you want them? Because a website is basically passive — it's picking up searches you're literally missing right now, whether you want the leads or not.",
+    line: "That's awesome to hear. If more qualified customers DID start showing up next month, would you turn them away, or would you want them? Because a website is passive — it picks up searches you're missing right now, whether you want the leads or not.",
     note: "NEPQ reframe — make them reveal whether they'd actually turn down more revenue. Almost nobody says 'yes, turn it away.' If they do, respect it and exit.",
     responses: [
       { label: "Sure, I'd take more leads", next: 'good_news', tone: 'positive' },
@@ -301,7 +301,7 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_not_interested: {
     id: 'obj_not_interested',
     speaker: 'setter',
-    line: "Totally respect that. Before I let you go — honest question, no pitch: if you could flip a switch right now and have 3–5 more qualified customers show up at {business_name} next month, would you want that, or is your plate genuinely full?",
+    line: "Totally respect that. One question before I let you go — if you could flip a switch and have 3–5 more qualified customers show up at {business_name} next month, would you want that, or is your plate genuinely full?",
     note: "Soft takeaway + NEPQ discovery in one. Gives them one honest out without feeling sold-to. Almost nobody says 'plate is full.' If they do, respect it.",
     responses: [
       { label: "Sure, I'd take more leads", next: 'good_news', tone: 'positive' },
