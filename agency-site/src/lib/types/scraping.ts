@@ -17,6 +17,7 @@ export interface ScrapeJob {
   created_at: string;
   started_at: string | null;
   completed_at: string | null;
+  heartbeat_at: string | null;
   created_by: string;
 }
 

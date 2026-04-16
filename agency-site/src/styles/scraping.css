@@ -316,6 +316,23 @@
   background: var(--accent-dim);
 }
 
+.job-action-resume {
+  border-color: #f59e0b;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.job-action-resume:hover:not(:disabled) {
+  border-color: #fbbf24;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.16);
+}
+
+.job-card-status-stalled {
+  color: #ef4444;
+  font-style: normal;
+}
+
 .job-action-view:hover:not(:disabled) {
   border-color: #22c55e;
   color: #22c55e;

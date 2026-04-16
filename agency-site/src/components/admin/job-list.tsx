@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import type { ScrapeJob } from '@/lib/types/scraping';
 import ProgressBar from './progress-bar';
 import PlacesModal from './places-modal';
-import StageBadge, { stageFor } from './stage-badge';
+import StageBadge, { stageFor, isStalled } from './stage-badge';
 
 interface JobListProps {
   jobs: ScrapeJob[];
@@ -236,6 +236,15 @@ export default function JobList({ jobs, setJobs }: JobListProps) {
     }
   };
 
+  const resumeJob = async (jobId: string) => {
+    setLoadingAction(jobId);
+    try {
+      await fetch(`/api/scrape/${jobId}/resume`, { method: 'POST' });
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
   if (jobs.length === 0) {
     return (
       <div className="job-list-empty">
@@ -253,11 +262,13 @@ export default function JobList({ jobs, setJobs }: JobListProps) {
           const isPending = stage === 'queuing';
           const isScanning = stage === 'scanning';
           const isVerifying = stage === 'verifying';
-          const isActive = isPending || isScanning || isVerifying;
+          const isStalledJob = stage === 'stalled';
+          const isActive = isPending || isScanning || isVerifying || isStalledJob;
           const isFinished = stage === 'done' || stage === 'failed';
           const isBusy = loadingAction === job.id;
+          const stalled = isStalled(job);
 
-          const etaSeconds = isActive ? estimateEtaSeconds(job) : null;
+          const etaSeconds = !stalled && isActive ? estimateEtaSeconds(job) : null;
           const cost = estimateCostUsd(job);
 
           return (
@@ -282,6 +293,12 @@ export default function JobList({ jobs, setJobs }: JobListProps) {
 
               {isPending && (
                 <div className="job-card-status-detail">Waking up worker machine...</div>
+              )}
+
+              {isStalledJob && (
+                <div className="job-card-status-detail job-card-status-stalled">
+                  Worker hasn&apos;t checked in for over 2 min — probably crashed mid-scan. Click Resume to pick up where it left off.
+                </div>
               )}
 
               {isScanning && (
@@ -364,6 +381,15 @@ export default function JobList({ jobs, setJobs }: JobListProps) {
               )}
 
               <div className="job-card-actions">
+                {isStalledJob && (
+                  <button
+                    className="job-action-btn job-action-resume"
+                    onClick={() => resumeJob(job.id)}
+                    disabled={isBusy}
+                  >
+                    {isBusy ? 'Resuming...' : 'Resume'}
+                  </button>
+                )}
                 {isActive && (
                   <button
                     className="job-action-btn job-action-cancel"
