@@ -35,6 +35,27 @@ TEXT_FIELD_MASK = ",".join(["nextPageToken", *_PLACE_FIELDS])
 MAX_NEARBY_RADIUS_M = 50_000
 METERS_PER_MILE = 1609.344
 
+# Category sweep used when the caller has no user-specified query_filter.
+# Each term is a text search performed per tile; results are merged + deduped
+# by place_id. Covers the business universe in scoring.STRONG_BUSINESS_TYPES.
+# Keep this list tight — every entry ~multiplies Google API cost per tile.
+CATEGORY_QUERIES: tuple[str, ...] = (
+    "restaurant",
+    "cafe coffee bakery",
+    "bar pub",
+    "hair salon barber",
+    "nail salon spa",
+    "laundromat dry cleaner",
+    "auto repair car wash",
+    "plumber electrician contractor",
+    "retail store",
+    "grocery pharmacy convenience",
+    "dentist doctor chiropractor",
+    "gym fitness studio",
+    "lawyer accountant insurance",
+    "florist pet store",
+)
+
 
 @dataclass(frozen=True)
 class Place:

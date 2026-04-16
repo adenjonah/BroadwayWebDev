@@ -47,6 +47,23 @@ class SupabaseDB:
     ) -> None:
         self.update_job(job_id, tiles_done=tiles_done, total_found=total_found)
 
+    def update_tile_progress(
+        self,
+        job_id: str,
+        tile_idx: int,
+        tiles_done: int,
+        category: str,
+        total_found: int,
+    ) -> None:
+        """Single-write progress update used during the tile/category sweep."""
+        self.update_job(
+            job_id,
+            current_tile=tile_idx,
+            tiles_done=tiles_done,
+            current_category=category,
+            total_found=total_found,
+        )
+
     def complete_job(
         self, job_id: str, qualified_count: int, found_places: list[dict]
     ) -> None:

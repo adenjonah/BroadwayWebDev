@@ -5,14 +5,21 @@ import sys
 import time
 import random
 
-from places import PlacesClient, tile_circle, miles_to_meters, haversine_m
+from places import (
+    PlacesClient,
+    tile_circle,
+    miles_to_meters,
+    haversine_m,
+    CATEGORY_QUERIES,
+)
 from categories import is_qualified_business
 from verify_web import has_discoverable_website
 from db import SupabaseDB
 
 VERIFY_DELAY = 4.0
 VERIFY_JITTER = 2.0
-TILE_MILES = 2.0
+TILE_MILES = 0.4
+CATEGORY_SLEEP = 0.2  # polite pause between category queries within a tile
 
 
 def _polite_sleep(base: float, jitter: float) -> None:
@@ -48,19 +55,53 @@ def execute_job(job_id: str) -> None:
         found: dict[str, object] = {}
 
         for i, (tlat, tlng, tradius) in enumerate(tiles):
-            try:
-                if query_filter:
+            tile_idx = i + 1
+
+            if query_filter:
+                # User-specified filter — single paginated text search per tile
+                db.update_tile_progress(
+                    job_id,
+                    tile_idx=tile_idx,
+                    tiles_done=i,
+                    category=query_filter,
+                    total_found=len(found),
+                )
+                try:
                     for place in client.text_search(
                         query_filter, tlat, tlng, tradius
                     ):
                         found[place.place_id] = place
-                else:
-                    for place in client.nearby(tlat, tlng, tradius):
-                        found[place.place_id] = place
-            except RuntimeError as exc:
-                print(f"  Tile {i + 1} failed: {exc}", file=sys.stderr)
+                except RuntimeError as exc:
+                    print(f"  Tile {tile_idx} failed: {exc}", file=sys.stderr)
+            else:
+                # Category sweep — loop through business categories so dense
+                # tiles aren't truncated by Google's 20-result Nearby cap.
+                for cat in CATEGORY_QUERIES:
+                    db.update_tile_progress(
+                        job_id,
+                        tile_idx=tile_idx,
+                        tiles_done=i,
+                        category=cat,
+                        total_found=len(found),
+                    )
+                    try:
+                        for place in client.text_search(cat, tlat, tlng, tradius):
+                            found[place.place_id] = place
+                    except RuntimeError as exc:
+                        print(
+                            f"  Tile {tile_idx} cat '{cat}' failed: {exc}",
+                            file=sys.stderr,
+                        )
+                    time.sleep(CATEGORY_SLEEP)
 
-            db.update_progress(job_id, tiles_done=i + 1, total_found=len(found))
+            # Mark this tile fully done
+            db.update_tile_progress(
+                job_id,
+                tile_idx=tile_idx,
+                tiles_done=tile_idx,
+                category="",
+                total_found=len(found),
+            )
 
         # Hard-clip to actual radius (text search uses soft bias)
         clipped = {
