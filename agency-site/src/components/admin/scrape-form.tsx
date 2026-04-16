@@ -2,9 +2,10 @@
 
 import { useState, useCallback } from 'react';
 import MapPicker from './map-picker';
+import type { ScrapeJob } from '@/lib/types/scraping';
 
 interface ScrapeFormProps {
-  onJobCreated: (jobId: string) => void;
+  onJobCreated: (job: ScrapeJob) => void;
 }
 
 export default function ScrapeForm({ onJobCreated }: ScrapeFormProps) {
@@ -54,7 +55,9 @@ export default function ScrapeForm({ onJobCreated }: ScrapeFormProps) {
         setError(`Job created but worker trigger failed: ${data.workerStatus}`);
         // Still notify so the job shows in the list, but error stays visible
       }
-      onJobCreated(data.jobId);
+      if (data.job) {
+        onJobCreated(data.job);
+      }
     } catch {
       setError('Network error. Please try again.');
     } finally {

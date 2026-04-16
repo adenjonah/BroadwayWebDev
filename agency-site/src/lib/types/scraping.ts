@@ -11,6 +11,8 @@ export interface ScrapeJob {
   qualified_count: number;
   candidates_total: number;
   candidates_verified: number;
+  current_tile: number;
+  current_category: string;
   error_message: string | null;
   created_at: string;
   started_at: string | null;

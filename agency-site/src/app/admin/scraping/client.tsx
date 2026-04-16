@@ -18,13 +18,15 @@ export default function ScrapingPageClient({
   initialLeadsTotal,
 }: ScrapingPageClientProps) {
   const [activeTab, setActiveTab] = useState<'scrape' | 'leads'>('scrape');
-  const [jobCount, setJobCount] = useState(initialJobs.length);
+  const [jobs, setJobs] = useState<ScrapeJob[]>(initialJobs);
 
-  const handleJobCreated = useCallback((jobId: string) => {
-    setJobCount((c) => c + 1);
+  const handleJobCreated = useCallback((job: ScrapeJob) => {
     setActiveTab('scrape');
-    // The JobList component will pick up the new job via Realtime
-    void jobId;
+    // Optimistic insert — Realtime will reconcile subsequent updates.
+    setJobs((prev) => {
+      if (prev.some((j) => j.id === job.id)) return prev;
+      return [job, ...prev];
+    });
   }, []);
 
   return (
@@ -34,7 +36,7 @@ export default function ScrapingPageClient({
           <div className="admin-header-inner">
             <div>
               <h1>Lead Scraping</h1>
-              <p>{initialLeadsTotal} leads from {jobCount} scrape jobs</p>
+              <p>{initialLeadsTotal} leads from {jobs.length} scrape jobs</p>
             </div>
           </div>
         </div>
@@ -65,7 +67,7 @@ export default function ScrapingPageClient({
                 <ScrapeForm onJobCreated={handleJobCreated} />
               </div>
               <div className="scrape-panel-jobs">
-                <JobList initialJobs={initialJobs} />
+                <JobList jobs={jobs} setJobs={setJobs} />
               </div>
             </div>
           )}

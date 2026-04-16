@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'radiusMiles must be between 0 and 50' }, { status: 400 });
   }
 
-  // Create the job in Supabase
+  // Create the job in Supabase — return the full row so the client can
+  // optimistically render it before Realtime fires.
   const { data: job, error: insertError } = await supabase
     .from('scrape_jobs')
     .insert({
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
       query_filter: query ?? '',
       created_by: user.id,
     })
-    .select('id')
+    .select('*')
     .single();
 
   if (insertError || !job) {
@@ -70,5 +71,5 @@ export async function POST(request: NextRequest) {
     workerStatus = 'no_worker_config';
   }
 
-  return NextResponse.json({ jobId: job.id, workerStatus });
+  return NextResponse.json({ jobId: job.id, job, workerStatus });
 }

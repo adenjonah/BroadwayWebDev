@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { ScrapeJob } from '@/lib/types/scraping';
 import ProgressBar from './progress-bar';
 import PlacesModal from './places-modal';
+import StageBadge, { stageFor } from './stage-badge';
 
 interface JobListProps {
-  initialJobs: ScrapeJob[];
+  jobs: ScrapeJob[];
+  setJobs: Dispatch<SetStateAction<ScrapeJob[]>>;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -16,6 +18,13 @@ const STATUS_COLORS: Record<string, string> = {
   completed: '#22c55e',
   failed: '#ef4444',
 };
+
+// Rough verification cost per candidate (DDG delay + jitter average)
+const VERIFY_SECONDS_PER_CANDIDATE = 5;
+// Guess: ~30% of found places survive the candidate filter
+const CANDIDATE_YIELD_ESTIMATE = 0.3;
+// Suppress ETA until we have this many seconds of data
+const ETA_WARMUP_SECONDS = 10;
 
 function formatTime(iso: string | null): string {
   if (!iso) return '—';
@@ -38,8 +47,43 @@ function formatDuration(start: string | null, end: string | null): string {
   return `${minutes}m ${secs}s`;
 }
 
-export default function JobList({ initialJobs }: JobListProps) {
-  const [jobs, setJobs] = useState<ScrapeJob[]>(initialJobs);
+function formatEta(seconds: number): string {
+  if (seconds < 60) return `${Math.max(1, Math.round(seconds))}s`;
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.round(seconds % 60);
+  if (minutes < 60) return `${minutes}m ${secs}s`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${hours}h ${mins}m`;
+}
+
+function estimateEtaSeconds(job: ScrapeJob): number | null {
+  if (!job.started_at) return null;
+  const elapsed = (Date.now() - new Date(job.started_at).getTime()) / 1000;
+  if (elapsed < ETA_WARMUP_SECONDS) return null;
+
+  const stage = stageFor(job);
+  if (stage === 'scanning') {
+    if (job.tiles_done <= 0 || job.tiles_total <= 0) return null;
+    const tileSeconds = elapsed / job.tiles_done;
+    const tilesLeft = Math.max(0, job.tiles_total - job.tiles_done);
+    const scanEta = tilesLeft * tileSeconds;
+    // Approximate verify phase: we don't know candidates yet
+    const projectedCandidates =
+      (job.total_found / Math.max(1, job.tiles_done)) *
+      job.tiles_total *
+      CANDIDATE_YIELD_ESTIMATE;
+    const verifyEta = projectedCandidates * VERIFY_SECONDS_PER_CANDIDATE;
+    return scanEta + verifyEta;
+  }
+  if (stage === 'verifying') {
+    const left = Math.max(0, job.candidates_total - job.candidates_verified);
+    return left * VERIFY_SECONDS_PER_CANDIDATE;
+  }
+  return null;
+}
+
+export default function JobList({ jobs, setJobs }: JobListProps) {
   const [, setTick] = useState(0);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [placesModal, setPlacesModal] = useState<{ places: unknown[]; label: string } | null>(null);
@@ -56,7 +100,6 @@ export default function JobList({ initialJobs }: JobListProps) {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'scrape_jobs' },
         (payload) => {
-          // DELETE events have empty `new` — remove the job from the list
           if (payload.eventType === 'DELETE') {
             const deleted = payload.old as { id?: string };
             if (deleted?.id) {
@@ -71,7 +114,8 @@ export default function JobList({ initialJobs }: JobListProps) {
           setJobs((prev) => {
             const exists = prev.find((j) => j.id === updated.id);
             if (exists) {
-              return prev.map((j) => (j.id === updated.id ? updated : j));
+              // Reconcile newer fields; optimistic insert fills in the gaps.
+              return prev.map((j) => (j.id === updated.id ? { ...j, ...updated } : j));
             }
             return [updated, ...prev];
           });
@@ -82,7 +126,7 @@ export default function JobList({ initialJobs }: JobListProps) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [setJobs]);
 
   useEffect(() => {
     const hasActive = jobs.some((j) => j.status === 'pending' || j.status === 'running');
@@ -140,22 +184,28 @@ export default function JobList({ initialJobs }: JobListProps) {
       <h3>Scrape Jobs</h3>
       <div className="job-list-items">
         {jobs.map((job) => {
-          const isPending = job.status === 'pending';
-          const isRunning = job.status === 'running';
-          const isActive = isPending || isRunning;
-          const isVerifying = isRunning && job.candidates_total > 0;
-          const isFinished = job.status === 'completed' || job.status === 'failed';
+          const stage = stageFor(job);
+          const isPending = stage === 'queuing';
+          const isScanning = stage === 'scanning';
+          const isVerifying = stage === 'verifying';
+          const isActive = isPending || isScanning || isVerifying;
+          const isFinished = stage === 'done' || stage === 'failed';
           const isBusy = loadingAction === job.id;
+
+          const etaSeconds = isActive ? estimateEtaSeconds(job) : null;
 
           return (
             <div key={job.id} className={`job-card${isActive ? ' job-card-active' : ''}`}>
               <div className="job-card-header">
-                <span
-                  className="job-status-badge"
-                  style={{ color: STATUS_COLORS[job.status] }}
-                >
-                  {job.status.toUpperCase()}
-                </span>
+                <div className="job-card-header-left">
+                  <StageBadge job={job} />
+                  <span
+                    className="job-status-badge"
+                    style={{ color: STATUS_COLORS[job.status] }}
+                  >
+                    {job.status.toUpperCase()}
+                  </span>
+                </div>
                 <span className="job-card-time">{mounted ? formatTime(job.created_at) : ''}</span>
               </div>
 
@@ -164,28 +214,60 @@ export default function JobList({ initialJobs }: JobListProps) {
                 {job.query_filter && <span className="job-card-query"> &middot; &ldquo;{job.query_filter}&rdquo;</span>}
               </div>
 
-              <div className="job-card-status-detail">
-                {isPending && 'Waking up worker machine...'}
-                {isRunning && isVerifying && `Verifying candidates — ${mounted ? formatDuration(job.started_at, null) : '...'} elapsed`}
-                {isRunning && !isVerifying && `Scanning tiles — ${mounted ? formatDuration(job.started_at, null) : '...'} elapsed`}
-                {job.status === 'completed' && `Finished in ${mounted ? formatDuration(job.started_at, job.completed_at) : '...'}`}
-                {job.status === 'failed' && 'Job failed — see error below'}
-              </div>
+              {isPending && (
+                <div className="job-card-status-detail">Waking up worker machine...</div>
+              )}
 
-              {(isPending || isRunning || job.status === 'completed') && !isVerifying && (
-                <ProgressBar
-                  current={job.tiles_done}
-                  total={job.tiles_total || 1}
-                  label={isPending ? 'Waiting to start...' : 'Tiles scanned'}
-                />
+              {isScanning && (
+                <>
+                  <ProgressBar
+                    current={job.tiles_done}
+                    total={job.tiles_total || 1}
+                    label="Tiles scanned"
+                  />
+                  <div className="job-card-status-detail">
+                    {job.tiles_total > 0
+                      ? `Tile ${job.current_tile || job.tiles_done}/${job.tiles_total}`
+                      : 'Preparing tiles...'}
+                    {job.current_category && (
+                      <> &middot; searching: <em>{job.current_category}</em></>
+                    )}
+                  </div>
+                </>
               )}
 
               {isVerifying && (
-                <ProgressBar
-                  current={job.candidates_verified}
-                  total={job.candidates_total}
-                  label="Verifying candidates (DDG)"
-                />
+                <>
+                  <ProgressBar
+                    current={job.candidates_verified}
+                    total={job.candidates_total}
+                    label="Verifying candidates (DDG)"
+                  />
+                  <div className="job-card-status-detail">
+                    DDG verifying candidate {job.candidates_verified}/{job.candidates_total}
+                  </div>
+                </>
+              )}
+
+              {isFinished && stage === 'done' && (
+                <div className="job-card-status-detail">
+                  Finished in {mounted ? formatDuration(job.started_at, job.completed_at) : '...'}
+                </div>
+              )}
+              {isFinished && stage === 'failed' && (
+                <div className="job-card-status-detail">Job failed — see error below</div>
+              )}
+
+              {isActive && (
+                <div className="job-card-live">
+                  <span>📍 {job.total_found} places found so far</span>
+                  {mounted && etaSeconds !== null && (
+                    <span>&middot; ⏱ ~{formatEta(etaSeconds)} remaining (est.)</span>
+                  )}
+                  {mounted && job.started_at && (
+                    <span>&middot; {formatDuration(job.started_at, null)} elapsed</span>
+                  )}
+                </div>
               )}
 
               <div className="job-card-stats">
@@ -199,7 +281,6 @@ export default function JobList({ initialJobs }: JobListProps) {
                 </div>
               )}
 
-              {/* Action buttons */}
               <div className="job-card-actions">
                 {isActive && (
                   <button
