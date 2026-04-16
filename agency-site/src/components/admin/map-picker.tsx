@@ -147,22 +147,22 @@ export default function MapPicker({
 
   const handleSearch = async () => {
     const query = searchValue.trim();
-    if (!query || !window.google) return;
+    if (!query) return;
 
     setSearchError('');
 
-    const geocoder = new google.maps.Geocoder();
     try {
-      const response = await geocoder.geocode({ address: query });
-      if (response.results && response.results.length > 0) {
-        const loc = response.results[0].geometry.location;
-        placeMarker(loc.lat(), loc.lng());
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+      const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+      const data = await res.json() as { lat: string; lon: string }[];
+      if (data.length > 0) {
+        placeMarker(parseFloat(data[0].lat), parseFloat(data[0].lon));
         setSearchValue('');
       } else {
-        setSearchError('No results found.');
+        setSearchError('No results found. Try a more specific address.');
       }
     } catch {
-      setSearchError('Search failed. Try a more specific address.');
+      setSearchError('Search failed. Check your connection and try again.');
     }
   };
 
