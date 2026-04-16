@@ -26,6 +26,13 @@ const CANDIDATE_YIELD_ESTIMATE = 0.3;
 // Suppress ETA until we have this many seconds of data
 const ETA_WARMUP_SECONDS = 10;
 
+// Google Places API (New) Text Search Pro SKU: $32 / 1000 calls.
+const GOOGLE_TEXT_SEARCH_COST_PER_CALL = 0.032;
+// Per-tile: 14 categories × ~1.8 pages avg = ~25 calls (see worker/places.py).
+const CALLS_PER_TILE_NO_FILTER = 14 * 1.8;
+// User-specified query: single category × ~1.8 pages.
+const CALLS_PER_TILE_WITH_FILTER = 1.8;
+
 function formatTime(iso: string | null): string {
   if (!iso) return '—';
   return new Date(iso).toLocaleString('en-US', {
@@ -57,6 +64,25 @@ function formatEta(seconds: number): string {
   return `${hours}h ${mins}m`;
 }
 
+function formatUsd(n: number): string {
+  if (n < 0.01) return '<$0.01';
+  if (n < 1) return `$${n.toFixed(2)}`;
+  if (n < 100) return `$${n.toFixed(2)}`;
+  return `$${Math.round(n)}`;
+}
+
+function estimateCostUsd(job: ScrapeJob): { spent: number; projected: number } {
+  const callsPerTile = job.query_filter
+    ? CALLS_PER_TILE_WITH_FILTER
+    : CALLS_PER_TILE_NO_FILTER;
+  const spent = job.tiles_done * callsPerTile * GOOGLE_TEXT_SEARCH_COST_PER_CALL;
+  const projected =
+    Math.max(job.tiles_total, job.tiles_done) *
+    callsPerTile *
+    GOOGLE_TEXT_SEARCH_COST_PER_CALL;
+  return { spent, projected };
+}
+
 function estimateEtaSeconds(job: ScrapeJob): number | null {
   if (!job.started_at) return null;
   const elapsed = (Date.now() - new Date(job.started_at).getTime()) / 1000;
@@ -82,6 +108,8 @@ function estimateEtaSeconds(job: ScrapeJob): number | null {
   }
   return null;
 }
+
+const ACTIVE_POLL_MS = 3000;
 
 export default function JobList({ jobs, setJobs }: JobListProps) {
   const [, setTick] = useState(0);
@@ -127,6 +155,43 @@ export default function JobList({ jobs, setJobs }: JobListProps) {
       supabase.removeChannel(channel);
     };
   }, [setJobs]);
+
+  // Polling fallback: Realtime doesn't always deliver on this plan/network,
+  // so while any job is active, refetch those rows every few seconds and
+  // merge in updates. Also drives elapsed-time / ETA re-renders.
+  const activeIdsKey = jobs
+    .filter((j) => j.status === 'pending' || j.status === 'running')
+    .map((j) => j.id)
+    .sort()
+    .join(',');
+
+  useEffect(() => {
+    if (!activeIdsKey) return;
+    const ids = activeIdsKey.split(',');
+    const supabase = createClient();
+
+    let cancelled = false;
+    const poll = async () => {
+      const { data, error } = await supabase
+        .from('scrape_jobs')
+        .select('*')
+        .in('id', ids);
+      if (cancelled || error || !data) return;
+      setJobs((prev) =>
+        prev.map((j) => {
+          const latest = data.find((d) => d.id === j.id) as ScrapeJob | undefined;
+          return latest ? { ...j, ...latest } : j;
+        }),
+      );
+    };
+
+    void poll();
+    const interval = setInterval(poll, ACTIVE_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [activeIdsKey, setJobs]);
 
   useEffect(() => {
     const hasActive = jobs.some((j) => j.status === 'pending' || j.status === 'running');
@@ -193,6 +258,7 @@ export default function JobList({ jobs, setJobs }: JobListProps) {
           const isBusy = loadingAction === job.id;
 
           const etaSeconds = isActive ? estimateEtaSeconds(job) : null;
+          const cost = estimateCostUsd(job);
 
           return (
             <div key={job.id} className={`job-card${isActive ? ' job-card-active' : ''}`}>
@@ -259,20 +325,36 @@ export default function JobList({ jobs, setJobs }: JobListProps) {
               )}
 
               {isActive && (
-                <div className="job-card-live">
-                  <span>📍 {job.total_found} places found so far</span>
-                  {mounted && etaSeconds !== null && (
-                    <span>&middot; ⏱ ~{formatEta(etaSeconds)} remaining (est.)</span>
-                  )}
-                  {mounted && job.started_at && (
-                    <span>&middot; {formatDuration(job.started_at, null)} elapsed</span>
-                  )}
-                </div>
+                <>
+                  <div className="job-card-live">
+                    <span>📍 {job.total_found} places found so far</span>
+                    {mounted && etaSeconds !== null && (
+                      <span>&middot; ⏱ ~{formatEta(etaSeconds)} remaining (est.)</span>
+                    )}
+                    {mounted && job.started_at && (
+                      <span>&middot; {formatDuration(job.started_at, null)} elapsed</span>
+                    )}
+                  </div>
+                  <div
+                    className="job-card-live job-card-cost"
+                    title="Google Places text search @ $32/1000 calls, ~25 calls per tile (14 categories × ~1.8 pages avg)"
+                  >
+                    <span>💰 {formatUsd(cost.spent)} spent</span>
+                    <span>&middot; ~{formatUsd(cost.projected)} projected total (est.)</span>
+                  </div>
+                </>
               )}
 
               <div className="job-card-stats">
                 <span>Places found: {job.total_found}</span>
                 <span>Qualified leads: {job.qualified_count}</span>
+                {isFinished && (
+                  <span
+                    title="Estimate: $32/1000 calls × tiles × ~25 calls per tile. Verify actual spend in Google Cloud billing."
+                  >
+                    Est. cost: ~{formatUsd(cost.projected)}
+                  </span>
+                )}
               </div>
 
               {job.error_message && (

@@ -244,6 +244,12 @@
   margin-top: 0.5rem;
 }
 
+.job-card-live.job-card-cost {
+  color: #f59e0b;
+  margin-top: 0.2rem;
+  cursor: help;
+}
+
 .job-card-time {
   font-size: 0.75rem;
   color: var(--text-dim);
