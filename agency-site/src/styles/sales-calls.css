@@ -4,7 +4,14 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding-bottom: 4rem;
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* All interactive elements: disable iOS tap flash + double-tap zoom */
+.sales-calls-root button,
+.sales-calls-path-selector button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .sales-calls-reset {
@@ -426,8 +433,12 @@
   max-width: 220px;
 }
 
-/* ── Responsive ────────────────────────────────────── */
+/* ── Responsive: tablet and below ─────────────────── */
 @media (max-width: 768px) {
+  .sales-calls-root {
+    gap: 1rem;
+  }
+
   .sales-calls-path-options {
     grid-template-columns: 1fr;
   }
@@ -440,8 +451,17 @@
     padding: 1.5rem 1.25rem;
   }
 
+  .sales-calls-note {
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
   .sales-calls-outcome {
     padding: 2rem 1.25rem;
+  }
+
+  .sales-calls-responses {
+    gap: 0.75rem;
   }
 
   .sales-calls-response-btn {
@@ -456,5 +476,195 @@
   .sales-calls-footer {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .sales-calls-back {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    min-height: 48px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sales-calls-header-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+/* ── Responsive: phones (portrait) ────────────────── */
+@media (max-width: 480px) {
+  .sales-calls-root {
+    gap: 0.875rem;
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Stack the admin header cleanly on small screens */
+  .admin-header .admin-header-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .admin-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .sales-calls-header-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .sales-calls-path-chip {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .sales-calls-reset {
+    min-height: 44px;
+    padding: 0.6rem 1rem;
+  }
+
+  /* Setter card — tighter padding, more readable line */
+  .sales-calls-card {
+    padding: 1.25rem 1rem;
+    border-left-width: 3px;
+  }
+
+  .sales-calls-speaker {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.6rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sales-calls-line {
+    font-size: clamp(1.2rem, 5.5vw, 1.55rem);
+    line-height: 1.4;
+  }
+
+  .sales-calls-note {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    font-size: 0.78rem;
+  }
+
+  /* Responses — bigger tap targets, tighter gap */
+  .sales-calls-responses-label {
+    font-size: 0.65rem;
+    margin-top: 0.25rem;
+  }
+
+  .sales-calls-response-btn {
+    min-height: 64px;
+    padding: 0.9rem 1rem;
+    font-size: 0.92rem;
+    gap: 0.75rem;
+  }
+
+  .sales-calls-response-arrow {
+    font-size: 1rem;
+  }
+
+  /* Outcome card */
+  .sales-calls-outcome {
+    padding: 1.75rem 1rem;
+  }
+
+  .sales-calls-outcome-title {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+  }
+
+  .sales-calls-outcome-note {
+    font-size: 0.88rem;
+  }
+
+  .sales-calls-outcome-cta {
+    font-size: 0.9rem;
+    padding: 0.8rem 1.5rem;
+    min-height: 48px;
+  }
+
+  /* Path selector */
+  .sales-calls-path-selector {
+    padding: 1.5rem 1rem;
+  }
+
+  .sales-calls-path-prompt {
+    font-size: clamp(1.15rem, 5vw, 1.45rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .sales-calls-path-option {
+    padding: 1.25rem 1rem;
+    min-height: 88px;
+  }
+
+  .sales-calls-path-option-title {
+    font-size: 1.05rem;
+  }
+
+  .sales-calls-path-option-sub {
+    font-size: 0.82rem;
+  }
+
+  /* History */
+  .sales-calls-history-chip {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .sales-calls-history-resp {
+    max-width: 110px;
+  }
+}
+
+/* ── Responsive: phones (landscape) ───────────────── */
+@media (max-height: 480px) and (orientation: landscape) {
+  .sales-calls-root {
+    gap: 0.75rem;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .sales-calls-card {
+    padding: 1rem 1.25rem;
+  }
+
+  .sales-calls-speaker {
+    margin-bottom: 0.5rem;
+  }
+
+  .sales-calls-line {
+    font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+    line-height: 1.35;
+  }
+
+  .sales-calls-note {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    font-size: 0.76rem;
+  }
+
+  .sales-calls-response-btn {
+    min-height: 52px;
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
+  }
+
+  /* Put paths side-by-side again in landscape */
+  .sales-calls-path-options {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Accessibility: reduced motion ────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .sales-calls-response-btn,
+  .sales-calls-response-btn:hover,
+  .sales-calls-response-arrow,
+  .sales-calls-path-option,
+  .sales-calls-path-option:hover {
+    transition: none;
+    transform: none;
   }
 }

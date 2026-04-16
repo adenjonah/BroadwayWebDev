@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   SCRIPT,
   START_NODE_ID,
@@ -80,6 +80,14 @@ export default function SalesCallsClient() {
   }, []);
 
   const breadcrumbs = useMemo(() => history.slice(-4), [history]);
+
+  // Mobile UX: scroll to top whenever we move to a new node or change path,
+  // so the setter never has to scroll up manually after tapping a response.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  }, [currentNodeId, path]);
 
   if (path === null) {
     return <PathSelector onSelect={handleSelectPath} />;
