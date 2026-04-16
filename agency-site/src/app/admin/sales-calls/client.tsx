@@ -188,9 +188,9 @@ function PathSelector({ onSelect }: { onSelect: (path: CallPath) => void }) {
                 className="sales-calls-path-option sales-calls-path-option--no"
                 onClick={() => onSelect('no_website')}
               >
-                <span className="sales-calls-path-option-title">No website</span>
+                <span className="sales-calls-path-option-title">No current site</span>
                 <span className="sales-calls-path-option-sub">
-                  {PATH_LABEL.no_website} — pitch a brand new site.
+                  {PATH_LABEL.no_website}. Pitch: &quot;we already built you one.&quot;
                 </span>
               </button>
               <button
@@ -198,9 +198,9 @@ function PathSelector({ onSelect }: { onSelect: (path: CallPath) => void }) {
                 className="sales-calls-path-option sales-calls-path-option--yes"
                 onClick={() => onSelect('has_website')}
               >
-                <span className="sales-calls-path-option-title">Has a website</span>
+                <span className="sales-calls-path-option-title">Has a site</span>
                 <span className="sales-calls-path-option-sub">
-                  {PATH_LABEL.has_website} — pitch a rebuild / refresh.
+                  {PATH_LABEL.has_website}. Pitch: &quot;we already built you a redesign.&quot;
                 </span>
               </button>
             </div>

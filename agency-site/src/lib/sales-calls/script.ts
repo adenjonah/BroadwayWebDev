@@ -3,13 +3,13 @@ export type TerminalOutcome = 'booked' | 'callback' | 'not_interested' | 'wrong_
 export type CallPath = 'no_website' | 'has_website';
 
 export const PATH_LABEL: Record<CallPath, string> = {
-  no_website: "They don't have a website",
-  has_website: 'They have a website (needs a refresh)',
+  no_website: "No current site — we built them a brand new prototype",
+  has_website: 'Has a current site — we built them a redesign prototype',
 };
 
 export const PATH_SHORT: Record<CallPath, string> = {
-  no_website: 'No site',
-  has_website: 'Has site',
+  no_website: 'New site',
+  has_website: 'Redesign',
 };
 
 export type PathLine = string | Record<CallPath, string>;
@@ -84,10 +84,10 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'gatekeeper_regarding',
     speaker: 'setter',
     line: {
-      no_website: "Totally fair. I'm reaching out because {business_name} doesn't come up when people search for you online — I just want to flag that for {owner_first_name} and let them decide what to do with it. 60 seconds, that's it.",
-      has_website: "Totally fair. I'm reaching out because I found something on {business_name}'s current website that's probably costing them leads right now. 60 seconds with {owner_first_name} and they can decide what to do with it.",
+      no_website: "Totally fair. We built {business_name} a sample website — I just want {owner_first_name} to see it and decide whether they want it live. 60 seconds.",
+      has_website: "Totally fair. We built a redesign prototype for {business_name}'s current site — I just want to flag it for {owner_first_name} so they can take a look. 60 seconds.",
     },
-    note: "Stay specific-but-vague — give just enough curiosity to get the transfer. Don't give the full pitch to the gatekeeper. If pushed harder, pivot to a callback.",
+    note: "Mention the prototype — it's the strongest curiosity hook we have. The fact that we've already done work FOR them makes a transfer way more likely than a vague \"something we found\" pitch.",
     responses: [
       { label: "Let me check if they can talk", next: 'owner_transferred', tone: 'positive' },
       { label: "Leave a message / I'll pass it on", next: 'gatekeeper_callback', tone: 'neutral' },
@@ -174,10 +174,10 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'good_news',
     speaker: 'setter',
     line: {
-      no_website: "Good news: we build clean, affordable websites for local businesses exactly like yours. Fast turnaround, shows up on Google, looks great on phones — and you'd start capturing the customers who are currently searching and finding nothing. Our designer does a free 15-minute call, looks at what {business_name} needs, and gives you a straight quote. Want me to grab you a time?",
-      has_website: "Good news: we rebuild sites like yours all the time. We keep whatever's working, fix what's not — modern look, shows up on Google properly, built so visitors actually turn into customers. Free 15-minute call with our designer, pulls up your current site live, gives you a straight quote on what a refresh would run. Want me to grab you a slot?",
+      no_website: "Good news: we already built you one. A custom sample website for {business_name} — it's live, you can see it. Our designer wants to walk you through it on a 15-minute call so you can see exactly what it'd look like for your business. No pressure — but if you like it, we can have it live for you inside a week. Want me to grab you a time?",
+      has_website: "Good news: we already built you a redesign. A custom prototype replacement for {business_name}'s site — it's live, you can see it. Our designer wants to walk you through it on a 15-minute call so you can see side-by-side what an upgrade would look like. No pressure — if you like it, we can have it live for you inside a week. Want me to grab you a time?",
     },
-    note: "This is the pitch. Ask for the 15-min meeting immediately after. Keep the tone casual, not salesy.",
+    note: "THE pitch. The power move is tangibility — we've already done the work. Ask for the 15-minute slot immediately. Don't oversell; the prototype does the selling. NEVER email the link before the call — the walkthrough is the sale.",
     responses: [
       { label: "Yeah let's book it", next: 'book_time', tone: 'positive' },
       { label: "Tell me more first", next: 'pitch_details', tone: 'positive' },
@@ -192,10 +192,10 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'pitch_details',
     speaker: 'setter',
     line: {
-      no_website: "Short version: 15 minutes with our designer. He'll look at what kind of site {business_name} needs, show you a couple of examples we've built for similar local businesses, and give you a straight number to get one launched. Starts at a few hundred bucks, fast turnaround. Zero obligation. Want me to grab a slot?",
-      has_website: "Short version: 15 minutes with our designer. He'll pull up your current site live on the call, walk through exactly what's costing you leads right now, and give you a straight quote to fix it. Most owners find out about stuff they didn't know was broken. Zero obligation. Want me to grab a slot?",
+      no_website: "Short version: our designer pulls up the sample site we built for {business_name} live on the call, walks you through every section, and tells you exactly what it'd cost to take it live. 15 minutes. Zero obligation. You either love it or you don't. Want me to grab a slot?",
+      has_website: "Short version: our designer pulls up the redesign we built for {business_name} live on the call, walks through it side-by-side with your current site, and tells you exactly what it'd cost to swap it in. 15 minutes. Zero obligation. You either love it or you don't. Want me to grab a slot?",
     },
-    note: "Emphasize 15 min + straight quote + zero obligation. Assume the close.",
+    note: "Emphasize: prototype already exists + 15 min + zero obligation + \"love it or you don't\" gives them a psychological out. Assume the close.",
     responses: [
       { label: "OK let's do it", next: 'book_time', tone: 'positive' },
       { label: "How much is it roughly?", next: 'obj_price', tone: 'objection' },
@@ -208,7 +208,7 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_enough_business: {
     id: 'obj_enough_business',
     speaker: 'setter',
-    line: "That's awesome to hear. If more qualified customers DID start showing up next month, would you turn them away, or would you want them? Because a website is passive — it picks up searches you're missing right now, whether you want the leads or not.",
+    line: "That's awesome to hear. Still — we already built the site, so you'd at least want to see what we made for {business_name}, right? 15 minutes to look at it, then you decide if you ever want it live. No pressure at all.",
     note: "NEPQ reframe — make them reveal whether they'd actually turn down more revenue. Almost nobody says 'yes, turn it away.' If they do, respect it and exit.",
     responses: [
       { label: "Sure, I'd take more leads", next: 'good_news', tone: 'positive' },
@@ -221,12 +221,12 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'obj_have_site',
     speaker: 'setter',
     line: {
-      no_website: "Oh — you've got a site up already? My bad, I couldn't find one when I looked. What's the URL? Because if it exists but I couldn't find it easily, that's actually part of the problem we'd want to fix.",
+      no_website: "Oh — you've got a site up already? My bad, I couldn't find one when I looked — what's the URL? Because we built a sample assuming you didn't have one. I still want you to see what we made — it may be an upgrade on what you've got either way.",
       has_website: "Nice — out of curiosity, when's the last time it actually got you a brand new customer? Or are most of your leads still coming from word of mouth and repeats?",
     },
     note: {
-      no_website: "Discovery branch — your lead data said no site but they claim they have one. Get the URL, verify, and pivot. If the URL is genuinely hard to find, that IS the pitch.",
-      has_website: "Classic NEPQ. Don't argue with their site — make them say it's not pulling weight. If they brag about it, respect it and exit or pivot to the lead-volume angle.",
+      no_website: "Discovery branch — your lead data said no site but they claim they have one. Get the URL, verify quickly in your head. The pitch still works: \"we already built a sample — take a look at both side-by-side.\"",
+      has_website: "Classic NEPQ. Don't argue with their site — make them say it's not pulling weight. Then pivot to pitch_details which reveals we've built a redesign.",
     },
     responses: [
       { label: "They gave URL — site is actually outdated / hard to find", next: 'pitch_details', tone: 'positive' },
@@ -240,8 +240,8 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_price: {
     id: 'obj_price',
     speaker: 'setter',
-    line: "Totally fair — most owners ask that first. Honestly, a lot of the owners we work with felt the same way before they saw the numbers. Our sites usually start at a few hundred bucks and most owners pay it back in the first month or two once leads start coming in. But the 15-min call is literally there to get you a real quote based on what you need — not a ballpark. Worth it to get the actual number?",
-    note: "3 F's: Feel, Felt, Found. NEVER quote a firm price — that's the closer's job. Deflect to the free call every time.",
+    line: "Totally fair — most owners ask that first. A lot of the owners we work with felt the same way before they saw what we built. Our sites usually start at a few hundred bucks one-time, and most owners pay it back in the first month or two once leads start coming in. But the 15-min call is where you see the actual prototype AND get the real number for your setup. Worth seeing what we made for you?",
+    note: "3 F's: Feel, Felt, Found. NEVER quote a firm price — that's the closer's job. The prototype is the deflection: \"come see what we built for you\" beats \"let me quote you.\"",
     responses: [
       { label: "OK yeah, book the call", next: 'book_time', tone: 'positive' },
       { label: "I just want a ballpark", next: 'obj_price_ballpark', tone: 'objection' },
@@ -253,7 +253,7 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_price_ballpark: {
     id: 'obj_price_ballpark',
     speaker: 'setter',
-    line: "I hear you. Range is usually a few hundred to low thousands one-time, depending on how many pages and features you need. But every business's setup is different — my designer doesn't like me quoting firm numbers because he's the one who actually has to build it. 15 minutes, zero obligation, real number. Cool?",
+    line: "I hear you. Range is usually a few hundred to low thousands one-time, depending on how many pages and features. But you'll see the actual prototype we built for {business_name} on the call, and my designer will give you the real number based on what's there. 15 minutes, zero obligation. Cool?",
     note: "Last-resort ballpark only — frame it wide and re-deflect to the 15-min call. Blame the designer for not quoting firm.",
     responses: [
       { label: "OK that's reasonable, book it", next: 'book_time', tone: 'positive' },
@@ -276,8 +276,8 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_send_info: {
     id: 'obj_send_info',
     speaker: 'setter',
-    line: "Happy to — one quick question so I send something actually useful: what's the main thing you'd want a website to do for {business_name}? More leads, look more professional, show up on Google, something else?",
-    note: "NEVER just send info — it's the email black hole. Qualify what they care about, THEN convert to a call. Also gives the designer context for the follow-up.",
+    line: "Happy to — but quick question so I flag the right stuff when I send it: what's the main thing you'd want a website to do for {business_name}? More leads, look more professional, show up on Google, something else?",
+    note: "NEVER just send the prototype URL cold — they'll glance at it, miss the value, and bail. Qualify what they care about, THEN convert to a booked walkthrough. The designer needs to walk them through it for the sale to land.",
     responses: [
       { label: "More leads / customers", next: 'obj_send_info_convert', tone: 'positive' },
       { label: "Show up on Google / get found", next: 'obj_send_info_convert', tone: 'positive' },
@@ -289,8 +289,8 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_send_info_convert: {
     id: 'obj_send_info_convert',
     speaker: 'setter',
-    line: "Got it — here's the thing: what takes my designer 5 minutes to walk you through live would take 4 emails to cover. Let me grab you a 15-min slot AND I'll send the email — if the email is enough, cancel the slot, no hard feelings. Deal?",
-    note: "Classic bait-and-book. Offer both — the slot gets 'cancelled' way less than you'd think once it's on their calendar.",
+    line: "Got it — here's the thing: the prototype hits way different when my designer walks you through it live than reading an email. Let me grab you a 15-min slot AND I'll send a quick preview — if the preview's enough, cancel the slot, no hard feelings. Deal?",
+    note: "Send a preview screenshot, NOT the full prototype URL — we need them on the call to see it properly. The slot gets 'cancelled' way less than you'd think once it's on their calendar.",
     responses: [
       { label: "OK deal, book it", next: 'book_time', tone: 'positive' },
       { label: "Just email me, no slot", next: 'book_callback', tone: 'neutral' },
@@ -301,12 +301,13 @@ export const SCRIPT: Record<string, CallNode> = {
   obj_not_interested: {
     id: 'obj_not_interested',
     speaker: 'setter',
-    line: "Totally respect that. One question before I let you go — if you could flip a switch and have 3–5 more qualified customers show up at {business_name} next month, would you want that, or is your plate genuinely full?",
-    note: "Soft takeaway + NEPQ discovery in one. Gives them one honest out without feeling sold-to. Almost nobody says 'plate is full.' If they do, respect it.",
+    line: "Totally respect that. One thing before I let you go — we literally already built a sample website for {business_name}. It's done. Would you at least want to see what we made before I take it down? 15 minutes, no pressure, then you decide.",
+    note: "Strongest soft takeaway we have — the work is DONE. Even a hard \"no\" often softens at \"you already built something for me?\" Almost nobody says no to seeing work that already exists. If they still say no, respect it.",
     responses: [
-      { label: "Sure, I'd take more leads", next: 'good_news', tone: 'positive' },
+      { label: "Sure, I'll look at it", next: 'book_time', tone: 'positive' },
+      { label: "Tell me more about it", next: 'good_news', tone: 'positive' },
       { label: "Maybe in a few months", next: 'book_callback', tone: 'neutral' },
-      { label: "Plate is genuinely full", next: 'out_not_interested', tone: 'negative' },
+      { label: "Hard no / plate is full", next: 'out_not_interested', tone: 'negative' },
       { label: "Just take me off your list", next: 'out_not_interested', tone: 'negative' },
     ],
   },
@@ -352,7 +353,7 @@ export const SCRIPT: Record<string, CallNode> = {
     id: 'out_booked',
     speaker: 'outcome',
     line: "Appointment booked",
-    note: "Log in CRM immediately: business, owner name, phone, email, appointment time, AND flag whether they currently have a site (so the designer knows whether to prep a mockup or a redesign proposal). Send the calendar invite RIGHT NOW — every minute of delay drops the show rate.",
+    note: "Log in CRM immediately: business, owner name, phone, email, appointment time, AND the prototype URL (so the designer has it loaded and ready before the call). Send the calendar invite RIGHT NOW — every minute of delay drops the show rate.",
     terminal: 'booked',
     responses: [
       { label: "Start new call", next: START_NODE_ID, tone: 'neutral' },
