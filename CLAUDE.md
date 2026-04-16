@@ -60,7 +60,7 @@ scraper/searches/
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r scraper/requirements.txt
 ```
 
 ### Usage
@@ -82,5 +82,5 @@ Key flags: `--no-verify-web` (skip DDG verification), `--tile-miles N` (sub-circ
 
 - Node.js with ESM (`"type": "module"` in package.json)
 - Dependencies: `@sanity/client`, `dotenv`
-- Python 3 with venv for the scraper (`requirements.txt`)
+- Python 3 with venv for the scraper (`scraper/requirements.txt`)
 - Sanity credentials + `GOOGLE_MAPS_API_KEY` in `.env` (never committed)

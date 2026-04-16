@@ -37,6 +37,15 @@ DIRECTORY_DOMAINS = {
     "usarestaurants.info", "menulist.menu", "zaubacorp.com",
     "allevents.in", "eventbrite.com", "nextdoor.com",
     "bringmethat.com", "papajohns.com",
+    # Food blogs, review aggregators, and other non-business sites
+    "foodlovergirl.com", "studynearme.com", "mapich.com",
+    "city-data.com", "wheree.com", "findopen.com",
+    "localbusiness.guide", "smartscrapers.com", "place123.net",
+    "nicelocal.com", "cylex.us.com", "hotfrog.com",
+    "directmap.us", "placeandsee.com", "cybo.com",
+    "brownbook.net", "tupalo.co", "communitywalk.com",
+    # University/edu sites are not the business's website
+    "columbia.edu", "nyu.edu", "cuny.edu",
 }
 
 
