@@ -14,6 +14,7 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
   const links = [
     { href: '/admin', label: 'Dashboard' },
     { href: '/admin/scraping', label: 'Scraping' },
+    { href: '/admin/sales-calls', label: 'Sales Calls' },
   ];
 
   return (

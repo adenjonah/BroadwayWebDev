@@ -1,0 +1,363 @@
+/* ── SALES CALLS SCRIPT ─────────────────────────────── */
+
+.sales-calls-root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: 4rem;
+}
+
+.sales-calls-reset {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+}
+
+/* ── Setter line card ──────────────────────────────── */
+.sales-calls-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 2rem clamp(1.5rem, 3vw, 2.5rem);
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.sales-calls-speaker {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+
+.sales-calls-speaker--setter {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.sales-calls-line {
+  font-family: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.sales-calls-note {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ── Response buttons ──────────────────────────────── */
+.sales-calls-responses-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  max-width: 900px;
+  width: 100%;
+  margin: 0.5rem auto 0;
+  padding: 0 0.25rem;
+}
+
+.sales-calls-responses {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.sales-calls-response-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 56px;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.12s;
+}
+
+.sales-calls-response-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  transform: translateX(2px);
+}
+
+.sales-calls-response-btn:active {
+  transform: translateX(0);
+}
+
+.sales-calls-response-label {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.sales-calls-response-arrow {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.sales-calls-response-btn:hover .sales-calls-response-arrow {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+
+.sales-calls-response-btn--positive {
+  border-left-color: #22c55e;
+}
+
+.sales-calls-response-btn--positive:hover {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.06);
+}
+
+.sales-calls-response-btn--neutral {
+  border-left-color: var(--accent);
+}
+
+.sales-calls-response-btn--neutral:hover {
+  border-color: rgba(77, 142, 255, 0.35);
+  background: var(--accent-dim);
+}
+
+.sales-calls-response-btn--objection {
+  border-left-color: #f59e0b;
+}
+
+.sales-calls-response-btn--objection:hover {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.sales-calls-response-btn--negative {
+  border-left-color: #ef4444;
+}
+
+.sales-calls-response-btn--negative:hover {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* ── Terminal outcome card ─────────────────────────── */
+.sales-calls-outcome {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 3rem clamp(1.5rem, 3vw, 2.5rem);
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sales-calls-outcome-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+
+.sales-calls-outcome-title {
+  font-family: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.sales-calls-outcome-note {
+  max-width: 540px;
+  margin: 0 auto 2rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.sales-calls-outcome-cta {
+  font-size: 0.95rem;
+  padding: 0.85rem 2rem;
+}
+
+.sales-calls-outcome--booked {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.08) 0%, var(--bg-card) 60%);
+}
+
+.sales-calls-outcome--booked .sales-calls-outcome-tag {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.sales-calls-outcome--booked .sales-calls-outcome-title {
+  color: #4ade80;
+}
+
+.sales-calls-outcome--callback {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-card) 60%);
+}
+
+.sales-calls-outcome--callback .sales-calls-outcome-tag {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.sales-calls-outcome--callback .sales-calls-outcome-title {
+  color: #fbbf24;
+}
+
+.sales-calls-outcome--not-interested {
+  border-color: var(--border-hover);
+}
+
+.sales-calls-outcome--not-interested .sales-calls-outcome-title {
+  color: var(--text-secondary);
+}
+
+.sales-calls-outcome--wrong-number {
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.sales-calls-outcome--wrong-number .sales-calls-outcome-tag {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.sales-calls-outcome--wrong-number .sales-calls-outcome-title {
+  color: #f87171;
+}
+
+/* ── Footer: back + history ────────────────────────── */
+.sales-calls-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 1rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.sales-calls-back {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+}
+
+.sales-calls-back:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sales-calls-back:disabled:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+  background: transparent;
+}
+
+.sales-calls-history {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.sales-calls-history-empty {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.sales-calls-history-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sales-calls-history-node {
+  color: var(--accent);
+  font-family: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.sales-calls-history-sep {
+  color: var(--text-dim);
+}
+
+.sales-calls-history-resp {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+/* ── Responsive ────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sales-calls-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .sales-calls-outcome {
+    padding: 2rem 1.25rem;
+  }
+
+  .sales-calls-response-btn {
+    min-height: 60px;
+    font-size: 0.92rem;
+  }
+
+  .sales-calls-history-resp {
+    max-width: 140px;
+  }
+
+  .sales-calls-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
